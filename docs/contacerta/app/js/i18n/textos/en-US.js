@@ -17,7 +17,7 @@ export default {
   'menu.anual.descricao': 'Totals and expenses for the whole year',
   'menu.assinatura': 'Subscription',
   'menu.gerenciarAssinatura': 'Manage or cancel subscription',
-  'menu.gerenciarAssinatura.descricao': 'Cancel, change your card or see receipts',
+  'menu.gerenciarAssinatura.descricao': 'Cancel, change your payment method or see receipts',
   'menu.preferencias': 'Settings',
 
   'preferencias.controle': 'Tracking',
@@ -213,7 +213,7 @@ export default {
   'atualizacao.apk': 'Version {versao} is available. Install the updated app to get it.',
   'atualizacao.baixarApk': 'Download',
   'assinatura.titulo': 'Subscribe to ContaCerta',
-  'assinatura.preco': 'R$ 3.99 per month. Cancel anytime.',
+  'assinatura.preco': 'R$ 3.99 per month, by card or Pix. Cancel anytime.',
   'assinatura.explicacao': 'To use the app, start a subscription. Payment is handled by Stripe and tied to this device code.',
   'assinatura.vencida': 'Your subscription has ended. Renew it to keep using the app.',
   'assinatura.codigo': 'This device code',
