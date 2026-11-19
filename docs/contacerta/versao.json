@@ -3,12 +3,14 @@
   "app": "contacerta",
   "versao": "3.5.0",
   "publicadaEm": "2026-11-15T02:32:14Z",
+  "fonteSha256": "b671e57750a98933da32b78776b7c29ea9babed447a3a62067d16bc57d074dad",
   "android": {
-    "versao": "3.1.0",
-    "codigo": 30100,
-    "sha256": "07e900228f711426053b1285d65e2bfe325fcf10aa35ecfae9d1c909f2c310f7",
-    "url": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.1.0-apk/ContaCerta-3.1.0.apk",
-    "tamanho": 5963639
+    "versao": "3.5.0",
+    "codigo": 30500,
+    "versaoMinima": "3.1.0",
+    "sha256": "eab9a1030c0c8517eb0416a85c84002e4d201d781a2cbb4b9504d6d19b54dd18",
+    "url": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.5.0-apk/ContaCerta-3.5.0.apk",
+    "tamanho": 5669753
   },
   "web": {
     "sha256": "6663f9bbfe54e9abf9aa971a5187d5d2db70277f1647c7f6ebf7d7742573b15c",

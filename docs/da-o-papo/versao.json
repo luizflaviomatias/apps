@@ -3,9 +3,11 @@
   "app": "da-o-papo",
   "versao": "0.4.0",
   "publicadaEm": "2026-11-19T14:57:38Z",
+  "fonteSha256": "9a115dd905233d19c021d578492d984b23721d56745c53f010d504a757a8ec49",
   "android": {
     "versao": "0.4.0",
     "codigo": 4,
+    "versaoMinima": "0.4.0",
     "sha256": "1055c0119b6be34f2ef8d3eb8cedb27d30d5239a4e4eff26cc563b2d0409f812",
     "url": "https://github.com/luizflaviomatias/apps/releases/download/da-o-papo-v0.4.0/da-o-papo.apk",
     "tamanho": 9644387
