@@ -1,0 +1,24 @@
+/* Páginas de Termos e Privacidade: mesmas cores da página dos apps. */
+:root {
+  --fundo: #f6f7fb; --cartao: #ffffff; --texto: #161a2b; --suave: #5b6178; --borda: #e2e5ef; --link: #2952e3; --destaque: #eef2ff;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fundo: #0f1220; --cartao: #181c2e; --texto: #eef0f8; --suave: #a6abc2; --borda: #2a2f47; --link: #8ea8ff; --destaque: #1d2440; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fundo); color: var(--texto); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 760px; margin: 0 auto; padding: 32px 16px 48px; }
+a { color: var(--link); }
+h1 { font-size: clamp(28px, 6vw, 38px); line-height: 1.15; margin: 8px 0 4px; }
+h2 { font-size: 21px; margin: 32px 0 8px; scroll-margin-top: 16px; }
+.sub, .voltar, footer { color: var(--suave); }
+.sub { margin: 0 0 20px; }
+.voltar { margin: 0; font-size: 15px; }
+.indice { font-size: 15px; color: var(--suave); background: var(--cartao); border: 1px solid var(--borda); border-radius: 14px; padding: 12px 14px; }
+.destaque { background: var(--destaque); border-radius: 14px; padding: 14px 16px; }
+ul { padding-left: 22px; }
+li { margin: 6px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 15px; display: block; overflow-x: auto; }
+th, td { text-align: left; vertical-align: top; padding: 10px 8px; border-bottom: 1px solid var(--borda); }
+th { color: var(--suave); font-weight: 600; }
+footer { margin-top: 40px; font-size: 15px; }
