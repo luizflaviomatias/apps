@@ -15,11 +15,11 @@ export class ErroAnuncioInvalido extends Error {
 }
 
 const SHA256_EM_HEXADECIMAL = /^[0-9a-f]{64}$/;
-const ENDERECO_PERMITIDO = /^https:\/\/(github\.com\/luizflaviomatias\/contacerta\/|luizflaviomatias\.github\.io\/contacerta\/)/;
+const ENDERECO_PERMITIDO = /^https:\/\/(github\.com\/luizflaviomatias\/apps\/releases\/download\/contacerta-|luizflaviomatias\.github\.io\/apps\/contacerta\/)/;
 
 /**
  * Confere o anúncio antes de usá-lo: versões no formato certo, SHA-256 do pacote e
- * endereços só do repositório e do site do ContaCerta.
+ * endereços só do ContaCerta publicado pela landing page (repositório apps).
  */
 export function validarAnuncio(anuncio) {
   const { versao, pacote, sha256, versaoMinimaDoApk, apk } = anuncio ?? {};
