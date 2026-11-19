@@ -680,3 +680,25 @@ button:disabled { cursor: default; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* Assinatura: tela de bloqueio até a licença valer */
+.topo[data-tela="assinatura"] :is(#botao-valores, #botao-visualizacao, #botao-menu) { visibility: hidden; }
+.assinatura { display: grid; gap: 14px; padding: 12px 0 24px; }
+.assinatura p { margin: 0; line-height: 1.45; }
+.assinatura__titulo { margin: 0; font-size: 1.6rem; line-height: 1.25; }
+.assinatura__preco { color: var(--roxo-texto); font-weight: 700; font-size: 1.15rem; }
+.assinatura__codigo {
+  display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 12px; padding: 14px 16px;
+  border-radius: var(--raio); background: var(--superficie); border: 1px solid var(--borda);
+}
+.assinatura__codigo span { grid-column: 1 / -1; color: var(--texto-suave); font-size: .9rem; }
+.assinatura__codigo strong { font-family: ui-monospace, monospace; font-size: 1.1rem; letter-spacing: .04em; overflow-wrap: anywhere; }
+.assinatura__assinar { display: grid; place-items: center; text-decoration: none; font-size: 1.1rem; }
+.assinatura__mensagem { min-height: 1.4em; color: var(--texto-suave); }
+.assinatura__chave summary { cursor: pointer; min-height: var(--toque); display: flex; align-items: center; color: var(--roxo-texto); font-weight: 600; }
+.assinatura__chave label { display: flex; flex-direction: column; gap: 6px; margin: 8px 0 10px; font-weight: 600; }
+.assinatura__chave textarea {
+  font: inherit; font-family: ui-monospace, monospace; font-size: .85rem; padding: 10px 12px; border-radius: var(--raio-pequeno);
+  border: 1.5px solid var(--borda-forte); background: var(--superficie); color: var(--texto); resize: vertical;
+}
+.assinatura__nota { color: var(--texto-suave); font-size: .95rem; text-align: center; }

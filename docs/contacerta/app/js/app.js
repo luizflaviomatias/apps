@@ -2,7 +2,8 @@
 import { criarAcoesDoMes } from './acoesDoMes.js';
 import { criarAgendadorDeAvisos, criarAgendadorSemNotificacoes } from './agendadorDeAvisos.js';
 import {
-  ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, criarRelogio, gerarId, obterArmazenamentoDoAparelho, registrarFuncionamentoOffline,
+  CHAVE_PUBLICA_DA_LICENCA, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA,
+  criarRelogio, gerarId, obterArmazenamentoDoAparelho, registrarFuncionamentoOffline,
 } from './ambiente.js';
 import { criarAtualizador, criarBuscaDeAnuncio } from './atualizador.js';
 import { criarAvisoDispensado } from './dados/avisoDispensado.js';
@@ -15,6 +16,7 @@ import { resumirEvolucaoDosGastos } from './dominio/evolucaoDeGastos.js';
 import { resumirGastosPorCategoria } from './dominio/gastosPorCategoria.js';
 import { MODO, deslocarMes, periodoDoDia, resumirAno, totalizar } from './dominio/orcamento.js';
 import { aplicarTextosNaPagina, criarLocalizacao } from './i18n/localizacao.js';
+import { criarBuscaDeLicenca, criarLicenciamento } from './licenciamento.js';
 import { criarNavegacao } from './navegacao.js';
 import { criarAtualizacaoNativa, obterPluginDeAtualizacao } from './plataforma/atualizacaoNativa.js';
 import { criarNotificacoesNativas, obterPluginDeNotificacoes } from './plataforma/notificacoesNativas.js';
@@ -38,6 +40,7 @@ import { criarPainelGraficoDeGastos } from './ui/painelGraficoDeGastos.js';
 import { criarSeletorDeIdioma } from './ui/seletorDeIdioma.js';
 import { criarSeletorDeMes } from './ui/seletorDeMes.js';
 import { criarSeletorDeModo } from './ui/seletorDeModo.js';
+import { criarTelaAssinatura } from './ui/telaAssinatura.js';
 import { criarTelaBoasVindas } from './ui/telaBoasVindas.js';
 import { VERSAO_DO_APP } from './versao.js';
 
@@ -58,6 +61,12 @@ const preferencias = criarPreferencias({
 });
 const local = criarLocalizacao(preferencias.obter());
 const avisoDispensado = criarAvisoDispensado({ armazenamento });
+const licenciamento = criarLicenciamento({
+  armazenamento,
+  chavePublica: CHAVE_PUBLICA_DA_LICENCA,
+  linkDoStripe: LINK_DE_ASSINATURA,
+  buscarLicenca: criarBuscaDeLicenca(ENDERECO_DO_EMISSOR_DE_LICENCAS),
+});
 const pluginDeNotificacoes = obterPluginDeNotificacoes();
 const notificacoes = pluginDeNotificacoes && criarNotificacoesNativas(pluginDeNotificacoes);
 const agendador = notificacoes
@@ -141,6 +150,9 @@ const painelAnual = criarPainelAnual(elemento('painel-anual'), { local, aoTrocar
 const telaBoasVindas = criarTelaBoasVindas(elemento('tela-boas-vindas'), {
   local, aoEscolherModo: (modo) => { alterarPreferencia('modo', modo); navegacao.abrirTela('mes'); },
 });
+const telaAssinatura = criarTelaAssinatura(elemento('tela-assinatura'), {
+  local, licenciamento, aoLiberar: () => navegacao.liberarEAbrir(primeiraTela()),
+});
 const menuLateral = criarMenuLateral(elemento('menu-lateral'), elemento('botao-menu'), {
   aoEscolherTela: (nome) => navegacao.abrirTela(nome),
   aoAlterarPreferencia: (nome, valor) => (nome === 'avisos' && valor === AVISOS.LIGADOS ? ligarAvisos() : alterarPreferencia(nome, valor)),
@@ -158,6 +170,7 @@ const botaoDeValores = criarBotaoDeValores(elemento('botao-valores'), {
 
 const navegacao = criarNavegacao({
   telas: {
+    assinatura: { renderizar: () => telaAssinatura.renderizar() },
     'boas-vindas': { renderizar: () => telaBoasVindas.renderizar() },
     mes: { renderizar: proteger(renderizarMes) },
     contas: { renderizar: proteger(renderizarContas) },
@@ -169,6 +182,7 @@ const navegacao = criarNavegacao({
   secoes: document.querySelectorAll('[data-tela-conteudo]'),
   topo: document.querySelector('.topo'),
   aoTrocarTela: (nome) => menuLateral.marcarTelaAtual(nome),
+  bloqueadaEm: 'assinatura',
 });
 
 elemento('botao-copiar-mes').addEventListener('click', proteger(acoes.copiarParaMesesSeguintes));
@@ -353,9 +367,24 @@ function mostrarVersaoDoApp() {
   for (const lugar of document.querySelectorAll('[data-versao-do-app]')) lugar.textContent = `ContaCerta ${VERSAO_DO_APP}`;
 }
 
+function primeiraTela() {
+  return preferencias.precisaEscolherModo() ? 'boas-vindas' : 'mes';
+}
+
+/** Com assinatura em dia, abre o app; sem ela, fica na tela de assinatura (os dados continuam guardados). */
+async function abrirConformeAssinatura() {
+  const resultado = await licenciamento.verificar();
+  if (resultado.ok) {
+    navegacao.liberarEAbrir(primeiraTela());
+    return;
+  }
+  telaAssinatura.mostrar(resultado);
+  navegacao.bloquearEm('assinatura');
+}
+
 mostrarVersaoDoApp();
 aplicarPreferencias(preferencias.obter());
-navegacao.abrirTela(preferencias.precisaEscolherModo() ? 'boas-vindas' : 'mes');
+abrirConformeAssinatura();
 registrarFuncionamentoOffline();
 prepararAvisosNoCelular();
 verificarAtualizacao();
