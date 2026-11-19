@@ -7,7 +7,7 @@ export const ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO = 'https://luizflaviomatias.gith
 /** Serviço que entrega a licença de quem assinou (repositório licencas, no Cloudflare Workers). */
 export const ENDERECO_DO_EMISSOR_DE_LICENCAS = 'https://licencas.luizflaviomatias.workers.dev';
 /** Payment Link do Stripe da assinatura mensal do ContaCerta. */
-export const LINK_DE_ASSINATURA = 'https://buy.stripe.com/5kQ4gA2eu1ug6J43U88og03';
+export const LINK_DE_ASSINATURA = 'https://buy.stripe.com/aFa5kE5qG4Gs8Rc3U88og05';
 /** Só a chave pública: o app confere licenças, mas não consegue criá-las. */
 export const CHAVE_PUBLICA_DA_LICENCA = Object.freeze({ kty: 'EC', crv: 'P-256', x: '9-VkVCSR2KcgtUKdWR5eSXkCQTUKmQxlMYAeJo3pCZg', y: 'Asf-TPYErtIegrLzMz5stVRDx5O-wNRpksJGs-JcwzI' });
 

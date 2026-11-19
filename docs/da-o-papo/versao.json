@@ -1,15 +1,15 @@
 {
   "formato": 1,
   "app": "da-o-papo",
-  "versao": "0.6.0",
-  "publicadaEm": "2026-11-19T17:49:20Z",
-  "fonteSha256": "82dce037e7ada4c928df51e3c217893dca7cb12094faa990a52bec9ab6710785",
+  "versao": "0.7.1",
+  "publicadaEm": "2026-11-19T18:02:55Z",
+  "fonteSha256": "531dbf7f5a0f752082332e81f4e3ccaefc7ce6e43e1cc7a789a3771128524917",
   "android": {
-    "versao": "0.6.0",
-    "codigo": 6,
-    "versaoMinima": "0.6.0",
-    "sha256": "b35759372127b7e49976f1749285c36992d9246c915a2885191fc368a5df01c3",
-    "url": "https://github.com/luizflaviomatias/apps/releases/download/da-o-papo-v0.6.0/da-o-papo.apk",
+    "versao": "0.7.1",
+    "codigo": 8,
+    "versaoMinima": "0.7.1",
+    "sha256": "8b72bf148e2ba49b8a38ed9524d3cad48c209862877ab9ac7625a2cd9d44a1d7",
+    "url": "https://github.com/luizflaviomatias/apps/releases/download/da-o-papo-v0.7.1/da-o-papo.apk",
     "tamanho": 9660767
   }
 }
