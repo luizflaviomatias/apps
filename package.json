@@ -1,0 +1,11 @@
+{
+  "name": "apps",
+  "private": true,
+  "type": "module",
+  "description": "Landing page dos apps e o motor que publica as versões novas",
+  "scripts": {
+    "test": "node --test \"testes/*.test.mjs\"",
+    "motor": "node motor/principal.mjs"
+  },
+  "engines": { "node": ">=22" }
+}

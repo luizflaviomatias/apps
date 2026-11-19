@@ -1,0 +1,48 @@
+name: Buscar atualizações dos apps
+
+on:
+  # O app avisa quando publica versão nova (precisa de um token no repositório do app).
+  repository_dispatch:
+    types: [nova-versao]
+  # Garantia, caso o aviso não chegue.
+  schedule:
+    - cron: "17,47 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Duas buscas ao mesmo tempo poderiam publicar o mesmo arquivo duas vezes.
+concurrency:
+  group: buscar-atualizacoes
+  cancel-in-progress: false
+
+jobs:
+  buscar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: Buscar e publicar versões novas
+        id: motor
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          # Leitura dos repositórios dos apps. Enquanto eles forem públicos, o GITHUB_TOKEN basta.
+          FONTE_TOKEN: ${{ secrets.FONTE_TOKEN }}
+        run: npm run motor
+      # Publica o que deu certo mesmo se algum app falhou; o job fica vermelho no fim.
+      - name: Publicar o site
+        if: always()
+        run: |
+          git add docs
+          if git diff --cached --quiet; then
+            echo "Nenhuma versão nova."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Publica versões novas dos apps"
+          git push

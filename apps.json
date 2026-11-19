@@ -1,0 +1,8 @@
+{
+  "repositorioPublico": "luizflaviomatias/apps",
+  "urlDoSite": "https://luizflaviomatias.github.io/apps/",
+  "apps": [
+    { "app": "da-o-papo", "repositorio": "luizflaviomatias/da-o-papo" },
+    { "app": "contacerta", "repositorio": "luizflaviomatias/contacerta" }
+  ]
+}

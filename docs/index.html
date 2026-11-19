@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apps do Luiz</title>
+  <meta name="description" content="Dá o Papo e ContaCerta: apps simples, em português, para o dia a dia.">
+  <style>
+    :root {
+      --fundo: #f6f7fb; --cartao: #ffffff; --texto: #161a2b; --suave: #5b6178; --borda: #e2e5ef;
+      --papo: #2952e3; --papo-2: #16c26a; --conta: #5b2db5; --conta-2: #8f6bdc;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --fundo: #0f1220; --cartao: #181c2e; --texto: #eef0f8; --suave: #a6abc2; --borda: #2a2f47; }
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--fundo); color: var(--texto); font: 17px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 920px; margin: 0 auto; padding: 56px 16px 40px; }
+    h1 { font-size: clamp(28px, 6vw, 40px); line-height: 1.15; margin: 0 0 8px; }
+    .sub { color: var(--suave); margin: 0 0 32px; }
+    .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+    .app { display: flex; flex-direction: column; gap: 10px; background: var(--cartao); border: 1px solid var(--borda); border-radius: 20px; padding: 24px; text-decoration: none; color: inherit; transition: transform .15s, box-shadow .15s; }
+    .app:hover, .app:focus-visible { transform: translateY(-2px); box-shadow: 0 10px 30px rgb(0 0 0 / .08); }
+    .icone { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; color: #fff; font-size: 28px; }
+    .papo .icone { background: linear-gradient(135deg, var(--papo), #12a6d8); }
+    .conta .icone { background: linear-gradient(135deg, var(--conta), var(--conta-2)); }
+    .app h2 { margin: 4px 0 0; font-size: 22px; }
+    .app p { margin: 0; color: var(--suave); }
+    .versao { font-size: 14px; color: var(--suave); }
+    .ir { margin-top: auto; font-weight: 600; }
+    .papo .ir { color: var(--papo); }
+    .conta .ir { color: var(--conta-2); }
+    footer { color: var(--suave); font-size: 14px; margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Apps simples, para o dia a dia</h1>
+    <p class="sub">Em português, de graça para testar e pensados para celular simples.</p>
+    <div class="apps">
+      <a class="app papo" href="da-o-papo/">
+        <span class="icone" aria-hidden="true">💬</span>
+        <h2>Dá o Papo</h2>
+        <p>Um amigo que entende das coisas: trabalho, dívida, direitos, saúde e mais, com resposta simples e o próximo passo.</p>
+        <span class="versao" data-versao="da-o-papo">Android</span>
+        <span class="ir">Conhecer e baixar →</span>
+      </a>
+      <a class="app conta" href="contacerta/">
+        <span class="icone" aria-hidden="true">📊</span>
+        <h2>ContaCerta</h2>
+        <p>Orçamento por mês ou por quinzena, que funciona sem internet e guarda tudo no próprio aparelho.</p>
+        <span class="versao" data-versao="contacerta">Android e iPhone</span>
+        <span class="ir">Conhecer e baixar →</span>
+      </a>
+    </div>
+    <footer>As versões novas aparecem aqui sozinhas, assim que são publicadas.</footer>
+  </main>
+  <script>
+    // Mostra a versão publicada de cada app (versao.json, escrito pelo motor).
+    for (const etiqueta of document.querySelectorAll('[data-versao]')) {
+      fetch(`${etiqueta.dataset.versao}/versao.json`, { cache: 'no-cache' })
+        .then((resposta) => (resposta.ok ? resposta.json() : undefined))
+        .then((publica) => { if (publica) etiqueta.textContent = `${etiqueta.textContent} · versão ${publica.versao}`; })
+        .catch(() => {});
+    }
+  </script>
+</body>
+</html>
