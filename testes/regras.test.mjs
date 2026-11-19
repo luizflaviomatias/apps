@@ -101,6 +101,8 @@ test('a versão pública troca etiqueta e arquivo por link e põe o endereço do
 test('cada app ganha o anúncio de atualização no formato que já sabe ler', () => {
   const contacerta = { app: 'contacerta', versao: '3.5.0', android: { versao: '3.5.0', versaoMinima: '3.1.0', codigo: 30500, url: 'A' }, web: { url: 'Z', sha256: sha('b') } };
   assert.deepEqual(montarAnuncioDoApp(contacerta), { versao: '3.5.0', pacote: 'Z', sha256: sha('b'), versaoMinimaDoApk: '3.1.0', apk: 'A' });
+  const radiestesiapro = { app: 'radiestesiapro', versao: '2.0.1', android: { versao: '2.0.0', versaoMinima: '2.0.0', codigo: 20000, url: 'R' }, web: { url: 'W', sha256: sha('c') } };
+  assert.deepEqual(montarAnuncioDoApp(radiestesiapro), { versao: '2.0.1', pacote: 'W', sha256: sha('c'), versaoMinimaDoApk: '2.0.0', apk: 'R' });
   const daOPapo = { app: 'da-o-papo', versao: '0.4.0', android: { versao: '0.4.0', codigo: 4, url: 'A' } };
   assert.deepEqual(montarAnuncioDoApp(daOPapo), { versao: '0.4.0', codigo: 4, apk: 'A' });
   assert.equal(montarAnuncioDoApp({ app: 'outro' }), undefined);

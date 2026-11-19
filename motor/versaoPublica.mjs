@@ -28,15 +28,19 @@ export function montarVersaoPublica(versaoDoApp, arquivos, { urlDoAppWeb, public
 }
 
 /** Cada app lê o anúncio de atualização num formato próprio. App sem anúncio: só a landing usa. */
+/** Apps com atualizador de pacote web (Capgo): baixam o pacote, ou o APK quando ele ficou velho demais. */
+const anuncioDePacoteWebEApk = (publica) => ({
+  versao: publica.versao,
+  pacote: publica.web.url,
+  sha256: publica.web.sha256,
+  versaoMinimaDoApk: publica.android.versaoMinima,
+  apk: publica.android.url,
+});
+
 const ANUNCIOS_DOS_APPS = {
   'da-o-papo': (publica) => ({ versao: publica.android.versao, codigo: publica.android.codigo, apk: publica.android.url }),
-  contacerta: (publica) => ({
-    versao: publica.versao,
-    pacote: publica.web.url,
-    sha256: publica.web.sha256,
-    versaoMinimaDoApk: publica.android.versaoMinima,
-    apk: publica.android.url,
-  }),
+  contacerta: anuncioDePacoteWebEApk,
+  radiestesiapro: anuncioDePacoteWebEApk,
 };
 
 export function montarAnuncioDoApp(publica) {

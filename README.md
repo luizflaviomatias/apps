@@ -1,6 +1,9 @@
 # Apps
 
-Página pública dos apps **Dá o Papo** e **ContaCerta**: https://luizflaviomatias.github.io/apps/
+Página pública dos apps **Dá o Papo**, **ContaCerta** e **RadiestesiaPro**: https://luizflaviomatias.github.io/apps/
+
+O RadiestesiaPro tem a landing num repositório público próprio (`radiestesiapro`); aqui ficam os
+downloads, o `versao.json` que ela lê e o anúncio de atualização do app.
 
 O código dos apps fica em repositórios próprios. Este repositório só tem as landing pages e o
 **motor** que traz as versões novas de lá e publica aqui, para o público baixar.
