@@ -1,0 +1,106 @@
+// Preferências da pessoa (controle, tema, idioma, moeda e valores à vista ou ocultos), guardadas no aparelho.
+// O armazenamento é injetado (localStorage no app, memória nos testes).
+import { MODO } from '../dominio/orcamento.js';
+
+export const TEMA = Object.freeze({ CLARO: 'claro', ESCURO: 'escuro' });
+export const IDIOMA = Object.freeze({ PORTUGUES: 'pt-BR', ESPANHOL: 'es-ES', INGLES: 'en-US' });
+export const MOEDA = Object.freeze({ REAL: 'BRL', EURO: 'EUR', DOLAR: 'USD' });
+/** Valores em dinheiro na tela: à vista ou escondidos (para abrir o app perto de outras pessoas). */
+export const VALORES = Object.freeze({ VISIVEIS: 'visiveis', OCULTOS: 'ocultos' });
+/** Avisos de vencimento no celular. Sem valor = a pessoa ainda não respondeu ao convite. */
+export const AVISOS = Object.freeze({ LIGADOS: 'ligados', DESLIGADOS: 'desligados' });
+export const HORARIOS_DOS_AVISOS = Object.freeze(['07:00', '08:00', '09:00', '10:00', '12:00', '18:00', '20:00']);
+const HORARIO_PADRAO_DOS_AVISOS = '09:00';
+
+const CHAVE = 'contacerta:preferencias';
+const IDIOMA_PADRAO = IDIOMA.INGLES;
+const IDIOMA_POR_PREFIXO = { pt: IDIOMA.PORTUGUES, es: IDIOMA.ESPANHOL, en: IDIOMA.INGLES };
+const MOEDA_POR_IDIOMA = {
+  [IDIOMA.PORTUGUES]: MOEDA.REAL,
+  [IDIOMA.ESPANHOL]: MOEDA.EURO,
+  [IDIOMA.INGLES]: MOEDA.DOLAR,
+};
+
+/** O primeiro idioma do aparelho que o app fala; se nenhum, inglês. */
+export function escolherIdiomaDoAparelho(idiomasDoAparelho) {
+  for (const idioma of idiomasDoAparelho) {
+    const suportado = IDIOMA_POR_PREFIXO[String(idioma).toLowerCase().split('-')[0]];
+    if (suportado) return suportado;
+  }
+  return IDIOMA_PADRAO;
+}
+
+export function moedaDoIdioma(idioma) {
+  return MOEDA_POR_IDIOMA[idioma];
+}
+
+/**
+ * @param {{ armazenamento: Pick<Storage, 'getItem' | 'setItem'>,
+ *           idiomasDoAparelho: readonly string[],
+ *           jaUsavaOApp: boolean }} dependencias
+ * `jaUsavaOApp`: quem já tinha lançamentos continua no modo quinzenal, sem a pergunta inicial.
+ */
+export function criarPreferencias({ armazenamento, idiomasDoAparelho, jaUsavaOApp }) {
+  let atuais = lerOuCriar();
+
+  function lerOuCriar() {
+    const salvas = lerSalvas();
+    if (salvas) return completarComPadroes(salvas);
+    const idioma = escolherIdiomaDoAparelho(idiomasDoAparelho);
+    const iniciais = {
+      modo: jaUsavaOApp ? MODO.QUINZENAL : undefined,
+      tema: TEMA.CLARO,
+      idioma,
+      moeda: moedaDoIdioma(idioma),
+      valores: VALORES.VISIVEIS,
+      avisos: undefined,
+      horarioDosAvisos: HORARIO_PADRAO_DOS_AVISOS,
+    };
+    gravar(iniciais);
+    return iniciais;
+  }
+
+  function lerSalvas() {
+    try {
+      const salvas = JSON.parse(armazenamento.getItem(CHAVE));
+      return salvas && typeof salvas === 'object' ? salvas : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  /** Valores desconhecidos (dados corrompidos ou de outra versão) voltam ao padrão. */
+  function completarComPadroes(salvas) {
+    const idioma = valorValido(salvas.idioma, IDIOMA) ?? escolherIdiomaDoAparelho(idiomasDoAparelho);
+    return {
+      modo: valorValido(salvas.modo, MODO) ?? (jaUsavaOApp ? MODO.QUINZENAL : undefined),
+      tema: valorValido(salvas.tema, TEMA) ?? TEMA.CLARO,
+      idioma,
+      moeda: valorValido(salvas.moeda, MOEDA) ?? moedaDoIdioma(idioma),
+      valores: valorValido(salvas.valores, VALORES) ?? VALORES.VISIVEIS,
+      avisos: valorValido(salvas.avisos, AVISOS),
+      horarioDosAvisos: valorValido(salvas.horarioDosAvisos, HORARIOS_DOS_AVISOS) ?? HORARIO_PADRAO_DOS_AVISOS,
+    };
+  }
+
+  function gravar(preferencias) {
+    armazenamento.setItem(CHAVE, JSON.stringify(preferencias));
+  }
+
+  function alterar(alteracoes) {
+    atuais = completarComPadroes({ ...atuais, ...alteracoes });
+    gravar(atuais);
+    return atuais;
+  }
+
+  return {
+    obter: () => atuais,
+    alterar,
+    precisaEscolherModo: () => atuais.modo === undefined,
+    aindaNaoRespondeuSobreAvisos: () => atuais.avisos === undefined,
+  };
+}
+
+function valorValido(valor, opcoes) {
+  return Object.values(opcoes).includes(valor) ? valor : undefined;
+}
