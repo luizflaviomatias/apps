@@ -1,7 +1,7 @@
 {
-  "versao": "2.0.0",
-  "pacote": "https://github.com/luizflaviomatias/apps/releases/download/radiestesiapro-v2.0.0/RadiestesiaPro-web-2.0.0.zip",
-  "sha256": "01e33f7dc539a31af0260cd89e12c3c1850d752b1301eb864d5113571cf88f94",
+  "versao": "2.0.1",
+  "pacote": "https://github.com/luizflaviomatias/apps/releases/download/radiestesiapro-v2.0.1/RadiestesiaPro-web-2.0.1.zip",
+  "sha256": "591dcd039c79e18bc8f9cc6ddbda662ba451c795c7667dce9fcd397a72ea4da0",
   "versaoMinimaDoApk": "2.0.0",
-  "apk": "https://github.com/luizflaviomatias/apps/releases/download/radiestesiapro-v2.0.0-apk/RadiestesiaPro-2.0.0.apk"
+  "apk": "https://github.com/luizflaviomatias/apps/releases/download/radiestesiapro-v2.0.1-apk/RadiestesiaPro-2.0.1.apk"
 }
