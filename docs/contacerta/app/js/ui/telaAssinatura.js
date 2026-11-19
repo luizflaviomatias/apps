@@ -14,10 +14,11 @@ function mensagemDaTentativa(resultado) {
  * Tela de bloqueio: mostra o preço, o código do aparelho e leva ao pagamento.
  * Depois de pagar, "Já assinei" busca a licença; quem recebeu uma chave por mensagem pode colar.
  * @param {{ local: object, licenciamento: ReturnType<typeof import('../licenciamento.js').criarLicenciamento>,
+ *           documentosLegais: { termosDeUso: string, politicaDePrivacidade: string },
  *           aoLiberar: () => void, copiarTexto?: (texto: string) => Promise<void> }} dependencias
  */
 export function criarTelaAssinatura(container, {
-  local, licenciamento, aoLiberar, copiarTexto = (texto) => navigator.clipboard.writeText(texto),
+  local, licenciamento, documentosLegais, aoLiberar, copiarTexto = (texto) => navigator.clipboard.writeText(texto),
 }) {
   let motivo = MOTIVO.SEM_LICENCA;
   let mensagem = '';
@@ -74,6 +75,10 @@ export function criarTelaAssinatura(container, {
           <button type="button" class="botao-secundario" data-acao="ativar">${t('assinatura.ativar')}</button>
         </details>
         <p class="assinatura__nota">${t('assinatura.dados')}</p>
+        <p class="assinatura__nota">
+          <a href="${escaparHtml(documentosLegais.termosDeUso)}" target="_blank" rel="noopener" data-documento="termos">${t('assinatura.termos')}</a>
+          · <a href="${escaparHtml(documentosLegais.politicaDePrivacidade)}" target="_blank" rel="noopener" data-documento="privacidade">${t('assinatura.privacidade')}</a>
+        </p>
       </div>`;
   }
 

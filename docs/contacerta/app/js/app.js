@@ -2,7 +2,7 @@
 import { criarAcoesDoMes } from './acoesDoMes.js';
 import { criarAgendadorDeAvisos, criarAgendadorSemNotificacoes } from './agendadorDeAvisos.js';
 import {
-  CHAVE_PUBLICA_DA_LICENCA, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA, LINK_DO_PORTAL_DO_CLIENTE,
+  CHAVE_PUBLICA_DA_LICENCA, DOCUMENTOS_LEGAIS, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA, LINK_DO_PORTAL_DO_CLIENTE,
   criarRelogio, gerarId, obterArmazenamentoDoAparelho, registrarFuncionamentoOffline,
 } from './ambiente.js';
 import { criarAtualizador, criarBuscaDeAnuncio } from './atualizador.js';
@@ -151,7 +151,7 @@ const telaBoasVindas = criarTelaBoasVindas(elemento('tela-boas-vindas'), {
   local, aoEscolherModo: (modo) => { alterarPreferencia('modo', modo); navegacao.abrirTela('mes'); },
 });
 const telaAssinatura = criarTelaAssinatura(elemento('tela-assinatura'), {
-  local, licenciamento, aoLiberar: () => navegacao.liberarEAbrir(primeiraTela()),
+  local, licenciamento, documentosLegais: DOCUMENTOS_LEGAIS, aoLiberar: () => navegacao.liberarEAbrir(primeiraTela()),
 });
 const menuLateral = criarMenuLateral(elemento('menu-lateral'), elemento('botao-menu'), {
   aoEscolherTela: (nome) => navegacao.abrirTela(nome),
@@ -365,7 +365,13 @@ function verificarAtualizacao() {
 /** Mostra a versão no rodapé da tela principal e no menu. */
 function mostrarVersaoDoApp() {
   for (const lugar of document.querySelectorAll('[data-versao-do-app]')) lugar.textContent = `ContaCerta ${VERSAO_DO_APP}`;
+}
+
+/** Os endereços externos do menu ficam no ambiente, não no HTML. */
+function preencherLinksDoMenu() {
   elemento('link-gerenciar-assinatura').href = LINK_DO_PORTAL_DO_CLIENTE;
+  elemento('link-termos').href = DOCUMENTOS_LEGAIS.termosDeUso;
+  elemento('link-privacidade').href = DOCUMENTOS_LEGAIS.politicaDePrivacidade;
 }
 
 function primeiraTela() {
@@ -384,6 +390,7 @@ async function abrirConformeAssinatura() {
 }
 
 mostrarVersaoDoApp();
+preencherLinksDoMenu();
 aplicarPreferencias(preferencias.obter());
 abrirConformeAssinatura();
 registrarFuncionamentoOffline();

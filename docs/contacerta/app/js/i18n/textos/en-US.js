@@ -18,6 +18,10 @@ export default {
   'menu.assinatura': 'Subscription',
   'menu.gerenciarAssinatura': 'Manage or cancel subscription',
   'menu.gerenciarAssinatura.descricao': 'Cancel, change your payment method or see receipts',
+  'menu.termos': 'Terms of Use',
+  'menu.termos.descricao': 'Subscription, cancellation and refund rules',
+  'menu.privacidade': 'Privacy Policy',
+  'menu.privacidade.descricao': 'What data the app uses and where it stays',
   'menu.preferencias': 'Settings',
 
   'preferencias.controle': 'Tracking',
@@ -229,6 +233,8 @@ export default {
   'assinatura.ativar': 'Activate',
   'assinatura.chaveRecusada': 'This key doesn’t work for this device or has expired.',
   'assinatura.dados': 'Your entries are still saved on this device.',
+  'assinatura.termos': 'Terms of Use',
+  'assinatura.privacidade': 'Privacy',
 
   'notificacao.titulo': 'Bills due today',
   'notificacao.uma': '{nome} — {valor}',

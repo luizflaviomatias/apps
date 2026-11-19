@@ -18,6 +18,10 @@ export default {
   'menu.assinatura': 'Suscripción',
   'menu.gerenciarAssinatura': 'Gestionar o cancelar la suscripción',
   'menu.gerenciarAssinatura.descricao': 'Cancelar, cambiar la forma de pago o ver los recibos',
+  'menu.termos': 'Términos de uso',
+  'menu.termos.descricao': 'Reglas de la suscripción, cancelación y reembolso',
+  'menu.privacidade': 'Política de privacidad',
+  'menu.privacidade.descricao': 'Qué datos usa la app y dónde quedan',
   'menu.preferencias': 'Preferencias',
 
   'preferencias.controle': 'Control',
@@ -229,6 +233,8 @@ export default {
   'assinatura.ativar': 'Activar',
   'assinatura.chaveRecusada': 'Esta clave no vale para este dispositivo o ya venció.',
   'assinatura.dados': 'Tus registros siguen guardados en este dispositivo.',
+  'assinatura.termos': 'Términos de uso',
+  'assinatura.privacidade': 'Privacidad',
 
   'notificacao.titulo': 'Facturas de hoy',
   'notificacao.uma': '{nome} — {valor}',

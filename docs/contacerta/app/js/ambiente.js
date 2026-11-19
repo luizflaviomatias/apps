@@ -10,6 +10,11 @@ export const ENDERECO_DO_EMISSOR_DE_LICENCAS = 'https://licencas.luizflaviomatia
 export const LINK_DE_ASSINATURA = 'https://buy.stripe.com/aFa5kE5qG4Gs8Rc3U88og05';
 /** Portal do cliente do Stripe: cancelar a assinatura, trocar a forma de pagamento e ver os recibos. */
 export const LINK_DO_PORTAL_DO_CLIENTE = 'https://billing.stripe.com/p/login/cNi6oIdXcgpa5F062g8og00';
+/** Termos de Uso e Política de Privacidade próprios do ContaCerta, publicados na página dos apps. */
+export const DOCUMENTOS_LEGAIS = Object.freeze({
+  termosDeUso: 'https://luizflaviomatias.github.io/apps/termos/contacerta/',
+  politicaDePrivacidade: 'https://luizflaviomatias.github.io/apps/privacidade/contacerta/',
+});
 /** Só a chave pública: o app confere licenças, mas não consegue criá-las. */
 export const CHAVE_PUBLICA_DA_LICENCA = Object.freeze({ kty: 'EC', crv: 'P-256', x: '9-VkVCSR2KcgtUKdWR5eSXkCQTUKmQxlMYAeJo3pCZg', y: 'Asf-TPYErtIegrLzMz5stVRDx5O-wNRpksJGs-JcwzI' });
 
