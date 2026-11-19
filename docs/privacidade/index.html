@@ -24,7 +24,7 @@
     <h2 id="dados">2. Quais dados e para quê</h2>
     <table>
       <tr><th>Dado</th><th>Para quê</th><th>Onde fica</th></tr>
-      <tr><td><b>Pagamento:</b> nome, e-mail, país e cartão informados na hora de assinar</td><td>Cobrar a assinatura, enviar recibos e permitir cancelar</td><td>Na Stripe. Nós vemos nome, e-mail, valores e situação da assinatura, mas <b>nunca</b> o número do cartão</td></tr>
+      <tr><td><b>Pagamento:</b> nome, e-mail, país e cartão (ou, no Pix, os dados que o Pix exige para a cobrança, como CPF e banco) informados na hora de assinar</td><td>Cobrar a assinatura, enviar recibos e permitir cancelar</td><td>Na Stripe e, no Pix, também no seu banco. Nós vemos nome, e-mail, valores e situação da assinatura, mas <b>nunca</b> o número do cartão nem os dados da conta no banco</td></tr>
       <tr><td><b>Código do aparelho:</b> um código aleatório criado quando o app é instalado</td><td>Ligar a assinatura ao aparelho e liberar o app</td><td>No aparelho e no emissor de licenças (Cloudflare), junto com o app, o número da assinatura e a data até quando está pago</td></tr>
       <tr><td><b>Perguntas do Dá o Papo:</b> a pergunta, o modo (curto ou completo), o assunto escolhido e as últimas 8 mensagens da conversa</td><td>Criar a resposta</td><td>Passam pelo servidor do Dá o Papo (Render) e pela Anthropic, empresa da inteligência artificial. O servidor <b>não guarda</b> o conteúdo das perguntas</td></tr>
       <tr><td><b>Conversas do Dá o Papo</b></td><td>Você rever ou continuar uma conversa</td><td>Só no seu aparelho. Você pode excluir cada uma na aba Conversas</td></tr>
