@@ -486,6 +486,7 @@ button:disabled { cursor: default; }
   padding: 10px 12px; border: 0; border-radius: var(--raio-pequeno);
   background: transparent; text-align: left; color: var(--texto);
 }
+a.menu-lateral__opcao { text-decoration: none; }
 .menu-lateral__opcao .icone { color: var(--roxo-texto); }
 .menu-lateral__opcao span { display: flex; flex-direction: column; }
 .menu-lateral__opcao small { color: var(--texto-suave); font-size: .88rem; }

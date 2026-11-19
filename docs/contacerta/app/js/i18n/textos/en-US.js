@@ -15,6 +15,9 @@ export default {
   'menu.comparacao.descricao': 'What went up and what went down',
   'menu.anual': 'Year summary',
   'menu.anual.descricao': 'Totals and expenses for the whole year',
+  'menu.assinatura': 'Subscription',
+  'menu.gerenciarAssinatura': 'Manage or cancel subscription',
+  'menu.gerenciarAssinatura.descricao': 'Cancel, change your card or see receipts',
   'menu.preferencias': 'Settings',
 
   'preferencias.controle': 'Tracking',

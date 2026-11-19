@@ -15,6 +15,9 @@ export default {
   'menu.comparacao.descricao': 'Lo que ha subido y lo que ha bajado',
   'menu.anual': 'Resumen del año',
   'menu.anual.descricao': 'Totales y gastos de todo el año',
+  'menu.assinatura': 'Suscripción',
+  'menu.gerenciarAssinatura': 'Gestionar o cancelar la suscripción',
+  'menu.gerenciarAssinatura.descricao': 'Cancelar, cambiar la tarjeta o ver los recibos',
   'menu.preferencias': 'Preferencias',
 
   'preferencias.controle': 'Control',

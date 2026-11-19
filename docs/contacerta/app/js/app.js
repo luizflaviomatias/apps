@@ -2,7 +2,7 @@
 import { criarAcoesDoMes } from './acoesDoMes.js';
 import { criarAgendadorDeAvisos, criarAgendadorSemNotificacoes } from './agendadorDeAvisos.js';
 import {
-  CHAVE_PUBLICA_DA_LICENCA, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA,
+  CHAVE_PUBLICA_DA_LICENCA, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA, LINK_DO_PORTAL_DO_CLIENTE,
   criarRelogio, gerarId, obterArmazenamentoDoAparelho, registrarFuncionamentoOffline,
 } from './ambiente.js';
 import { criarAtualizador, criarBuscaDeAnuncio } from './atualizador.js';
@@ -365,6 +365,7 @@ function verificarAtualizacao() {
 /** Mostra a versão no rodapé da tela principal e no menu. */
 function mostrarVersaoDoApp() {
   for (const lugar of document.querySelectorAll('[data-versao-do-app]')) lugar.textContent = `ContaCerta ${VERSAO_DO_APP}`;
+  elemento('link-gerenciar-assinatura').href = LINK_DO_PORTAL_DO_CLIENTE;
 }
 
 function primeiraTela() {

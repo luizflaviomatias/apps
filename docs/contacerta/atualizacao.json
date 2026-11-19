@@ -1,7 +1,7 @@
 {
-  "versao": "3.7.1",
-  "pacote": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.7.1/ContaCerta-web-3.7.1.zip",
-  "sha256": "d26e98e80c44e2de69777aac9bc3eba9b2eb33e802655617ec0309e5b704fea6",
+  "versao": "3.8.0",
+  "pacote": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.8.0/ContaCerta-web-3.8.0.zip",
+  "sha256": "431de8bcc7791c2eec2bae58173fc57f86efcefe791a1c2d12a872ee6b8fe6be",
   "versaoMinimaDoApk": "3.1.0",
-  "apk": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.7.1-apk/ContaCerta-3.7.1.apk"
+  "apk": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.8.0-apk/ContaCerta-3.8.0.apk"
 }

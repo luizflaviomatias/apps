@@ -1,2 +1,2 @@
 // Gerado por ferramentas/gerarVersao.mjs a partir do package.json. Não edite à mão.
-export const VERSAO_DO_APP = '3.7.1';
+export const VERSAO_DO_APP = '3.8.0';
