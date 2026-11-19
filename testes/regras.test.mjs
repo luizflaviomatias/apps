@@ -41,6 +41,23 @@ test('versao.json recusa nome de arquivo que sai da pasta e SHA-256 malformado',
   assert.throws(() => validarVersaoDoApp(semSha, 'contacerta'), /android.sha256/);
 });
 
+test('o mínimo do APK é opcional, mas não pode passar da versão do próprio APK', () => {
+  const comMinimo = versaoContaCerta();
+  comMinimo.android.versaoMinima = '3.0.0';
+  assert.doesNotThrow(() => validarVersaoDoApp(comMinimo, 'contacerta'));
+  comMinimo.android.versaoMinima = '3.2.0';
+  assert.throws(() => validarVersaoDoApp(comMinimo, 'contacerta'), /android.versaoMinima/);
+});
+
+test('sem mínimo, o APK anunciado vale como mínimo', () => {
+  const publica = montarVersaoPublica(
+    { app: 'da-o-papo', versao: '0.4.0', android: { versao: '0.4.0', codigo: 4, sha256: sha('a') } },
+    { android: { url: 'U', tamanho: 1 } },
+    { publicadaEm: 'x', fonteSha256: sha('f') },
+  );
+  assert.equal(publica.android.versaoMinima, '0.4.0');
+});
+
 test('versao.json precisa de pelo menos um arquivo para baixar', () => {
   const { android, web, ...semArquivos } = versaoContaCerta();
   assert.throws(() => validarVersaoDoApp(semArquivos, 'contacerta'), /sem android e sem web/);
@@ -67,21 +84,22 @@ test('a versão pública troca etiqueta e arquivo por link e põe o endereço do
   const publica = montarVersaoPublica(
     versaoContaCerta(),
     { android: { url: 'https://x/apk', tamanho: 10 }, web: { url: 'https://x/zip', tamanho: 5 } },
-    { urlDoAppWeb: 'https://site/contacerta/app/', publicadaEm: '2026-11-15T02:32:14Z' },
+    { urlDoAppWeb: 'https://site/contacerta/app/', publicadaEm: '2026-11-15T02:32:14Z', fonteSha256: sha('f') },
   );
   assert.deepEqual(publica, {
     formato: 1,
     app: 'contacerta',
     versao: '3.5.0',
     publicadaEm: '2026-11-15T02:32:14Z',
-    android: { versao: '3.1.0', codigo: 30100, sha256: sha('a'), url: 'https://x/apk', tamanho: 10 },
+    fonteSha256: sha('f'),
+    android: { versao: '3.1.0', codigo: 30100, versaoMinima: '3.1.0', sha256: sha('a'), url: 'https://x/apk', tamanho: 10 },
     web: { sha256: sha('b'), url: 'https://x/zip', tamanho: 5 },
     ios: { tipo: 'pwa', url: 'https://site/contacerta/app/' },
   });
 });
 
 test('cada app ganha o anúncio de atualização no formato que já sabe ler', () => {
-  const contacerta = { app: 'contacerta', versao: '3.5.0', android: { versao: '3.1.0', codigo: 30100, url: 'A' }, web: { url: 'Z', sha256: sha('b') } };
+  const contacerta = { app: 'contacerta', versao: '3.5.0', android: { versao: '3.5.0', versaoMinima: '3.1.0', codigo: 30500, url: 'A' }, web: { url: 'Z', sha256: sha('b') } };
   assert.deepEqual(montarAnuncioDoApp(contacerta), { versao: '3.5.0', pacote: 'Z', sha256: sha('b'), versaoMinimaDoApk: '3.1.0', apk: 'A' });
   const daOPapo = { app: 'da-o-papo', versao: '0.4.0', android: { versao: '0.4.0', codigo: 4, url: 'A' } };
   assert.deepEqual(montarAnuncioDoApp(daOPapo), { versao: '0.4.0', codigo: 4, apk: 'A' });

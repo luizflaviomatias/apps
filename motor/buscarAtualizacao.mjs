@@ -16,6 +16,12 @@ export class ErroIntegridade extends Error {
 const CANAIS_COM_ARQUIVO = ['android', 'web'];
 const sha256De = (conteudo) => createHash('sha256').update(conteudo).digest('hex');
 
+/** Versão mais nova, ou a mesma versão com o versao.json corrigido. Nunca volta para uma mais antiga. */
+function precisaPublicar(versaoDoApp, fonteSha256, publicada) {
+  if (ehMaisNova(versaoDoApp.versao, publicada.versao)) return true;
+  return versaoDoApp.versao === publicada.versao && fonteSha256 !== publicada.fonteSha256;
+}
+
 /**
  * @param {{ app: string, repositorio: string }} configuracao
  * @param {{ fonte, destino, site, repositorioPublico: string, urlDoSite: string }} dependencias
@@ -27,11 +33,13 @@ export async function buscarAtualizacao({ app, repositorio }, { fonte, destino, 
   if (!release) return { app, situacao: 'sem-versao' };
 
   const arquivoDeVersao = release.assets.find((arquivo) => arquivo.name === NOME_DO_ARQUIVO_DE_VERSAO);
-  const versaoDoApp = validarVersaoDoApp(JSON.parse(await fonte.baixarArquivo(repositorio, arquivoDeVersao)), app);
+  const textoDaVersao = await fonte.baixarArquivo(repositorio, arquivoDeVersao);
+  const versaoDoApp = validarVersaoDoApp(JSON.parse(textoDaVersao), app);
   conferirEtiqueta(release, versaoDoApp);
+  const fonteSha256 = sha256De(textoDaVersao);
 
   const publicada = await site.lerVersaoPublica(app);
-  if (publicada && !ehMaisNova(versaoDoApp.versao, publicada.versao)) {
+  if (publicada && !precisaPublicar(versaoDoApp, fonteSha256, publicada)) {
     return { app, situacao: 'em-dia', versao: publicada.versao };
   }
 
@@ -69,6 +77,7 @@ export async function buscarAtualizacao({ app, repositorio }, { fonte, destino, 
   const versaoPublica = montarVersaoPublica(versaoDoApp, publicados, {
     urlDoAppWeb: temAppWeb ? `${urlDoSite}${app}/app/` : undefined,
     publicadaEm: release.published_at,
+    fonteSha256,
   });
   await site.escreverJson(app, 'versao.json', versaoPublica);
   const anuncio = montarAnuncioDoApp(versaoPublica);

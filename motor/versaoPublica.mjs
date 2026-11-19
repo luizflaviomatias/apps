@@ -7,13 +7,14 @@ export const etiquetaPublica = (app, etiquetaDoApp) => `${app}-${etiquetaDoApp}`
 /**
  * @param {object} versaoDoApp versao.json validado
  * @param {{ [canal: string]: { url: string, tamanho: number } }} arquivos o que já foi publicado, por canal
- * @param {{ urlDoAppWeb?: string, publicadaEm: string }} extras
+ * @param {{ urlDoAppWeb?: string, publicadaEm: string, fonteSha256: string }} extras
+ *   `fonteSha256`: impressão do versao.json de origem, para notar quando ele muda sem mudar a versão.
  */
-export function montarVersaoPublica(versaoDoApp, arquivos, { urlDoAppWeb, publicadaEm }) {
-  const publica = { formato: 1, app: versaoDoApp.app, versao: versaoDoApp.versao, publicadaEm };
+export function montarVersaoPublica(versaoDoApp, arquivos, { urlDoAppWeb, publicadaEm, fonteSha256 }) {
+  const publica = { formato: 1, app: versaoDoApp.app, versao: versaoDoApp.versao, publicadaEm, fonteSha256 };
   if (versaoDoApp.android) {
-    const { versao, codigo, sha256 } = versaoDoApp.android;
-    publica.android = { versao, codigo, sha256, url: arquivos.android.url, tamanho: arquivos.android.tamanho };
+    const { versao, codigo, versaoMinima = versao, sha256 } = versaoDoApp.android;
+    publica.android = { versao, codigo, versaoMinima, sha256, url: arquivos.android.url, tamanho: arquivos.android.tamanho };
   }
   if (versaoDoApp.web) {
     publica.web = { sha256: versaoDoApp.web.sha256, url: arquivos.web.url, tamanho: arquivos.web.tamanho };
@@ -33,7 +34,7 @@ const ANUNCIOS_DOS_APPS = {
     versao: publica.versao,
     pacote: publica.web.url,
     sha256: publica.web.sha256,
-    versaoMinimaDoApk: publica.android.versao,
+    versaoMinimaDoApk: publica.android.versaoMinima,
     apk: publica.android.url,
   }),
 };

@@ -33,6 +33,10 @@ export function validarVersaoDoApp(dados, appEsperado) {
     conferirArquivo('android');
     if (!ehVersaoValida(dados.android.versao)) falhar(`android.versao "${dados.android.versao}"`);
     if (!Number.isInteger(dados.android.codigo) || dados.android.codigo <= 0) falhar(`android.codigo ${dados.android.codigo}`);
+    const { versaoMinima } = dados.android;
+    if (versaoMinima !== undefined && (!ehVersaoValida(versaoMinima) || compararVersoes(versaoMinima, dados.android.versao) > 0)) {
+      falhar(`android.versaoMinima "${versaoMinima}"`);
+    }
   }
   if (dados.web) conferirArquivo('web');
   if (dados.ios && !TIPOS_DE_IOS.has(dados.ios.tipo)) falhar(`ios.tipo "${dados.ios.tipo}"`);

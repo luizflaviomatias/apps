@@ -74,12 +74,28 @@ test('versão nova: copia o APK, escreve versao.json público e o anúncio do ap
   assert.deepEqual(site.arquivos['da-o-papo/atualizacao.json'], { versao: '0.5.0', codigo: 5, apk: url });
 });
 
-test('versão igual à publicada: não mexe em nada', async () => {
+test('versão e versao.json iguais aos publicados: não mexe em nada', async () => {
+  const fonte = daOPapo();
+  const primeiro = siteFalso(undefined);
+  await buscarAtualizacao({ app: 'da-o-papo', repositorio: 'eu/da-o-papo' }, dependencias(fonte, githubFalso(), primeiro));
   const destino = githubFalso();
-  const site = siteFalso({ versao: '0.5.0' });
-  const resultado = await buscarAtualizacao({ app: 'da-o-papo', repositorio: 'eu/da-o-papo' }, dependencias(daOPapo(), destino, site));
+  const site = siteFalso(primeiro.arquivos['da-o-papo/versao.json']);
+  const resultado = await buscarAtualizacao({ app: 'da-o-papo', repositorio: 'eu/da-o-papo' }, dependencias(fonte, destino, site));
   assert.equal(resultado.situacao, 'em-dia');
   assert.deepEqual(destino.envios, []);
+  assert.deepEqual(site.arquivos, {});
+});
+
+test('mesma versão com versao.json corrigido: publica de novo', async () => {
+  const site = siteFalso({ versao: '0.5.0', fonteSha256: 'de um versao.json antigo' });
+  const resultado = await buscarAtualizacao({ app: 'da-o-papo', repositorio: 'eu/da-o-papo' }, dependencias(daOPapo(), githubFalso(), site));
+  assert.equal(resultado.situacao, 'publicada');
+});
+
+test('versão mais antiga que a publicada: nunca volta atrás', async () => {
+  const site = siteFalso({ versao: '0.6.0', fonteSha256: 'outro' });
+  const resultado = await buscarAtualizacao({ app: 'da-o-papo', repositorio: 'eu/da-o-papo' }, dependencias(daOPapo(), githubFalso(), site));
+  assert.equal(resultado.situacao, 'em-dia');
   assert.deepEqual(site.arquivos, {});
 });
 
