@@ -6,9 +6,10 @@ import {
   criarRelogio, gerarId, obterArmazenamentoDoAparelho, registrarFuncionamentoOffline,
 } from './ambiente.js';
 import { criarAtualizador, criarBuscaDeAnuncio } from './atualizador.js';
+import { criarBloqueioDoApp } from './bloqueioDoApp.js';
 import { criarAvisoDispensado } from './dados/avisoDispensado.js';
 import { criarAnoConformePlanilha } from './dados/modeloPlanilha.js';
-import { AVISOS, HORARIOS_DOS_AVISOS, criarPreferencias } from './dados/preferencias.js';
+import { AVISOS, HORARIOS_DOS_AVISOS, PRAZOS_DO_BLOQUEIO_EM_MINUTOS, criarPreferencias } from './dados/preferencias.js';
 import { criarRepositorioOrcamento } from './dados/repositorioOrcamento.js';
 import { compararMeses } from './dominio/comparacaoDeMeses.js';
 import { resumirContasAPagar, vencimentosDoDia } from './dominio/contasAPagar.js';
@@ -19,6 +20,7 @@ import { aplicarTextosNaPagina, criarLocalizacao } from './i18n/localizacao.js';
 import { criarBuscaDeLicenca, criarLicenciamento } from './licenciamento.js';
 import { criarNavegacao } from './navegacao.js';
 import { criarAtualizacaoNativa, obterPluginDeAtualizacao } from './plataforma/atualizacaoNativa.js';
+import { criarBloqueioNativo, obterPluginsDoBloqueio } from './plataforma/bloqueioNativo.js';
 import { criarNotificacoesNativas, obterPluginDeNotificacoes } from './plataforma/notificacoesNativas.js';
 import { criarTratamentoDeErros } from './tratamentoDeErros.js';
 import { criarAviso } from './ui/aviso.js';
@@ -42,6 +44,7 @@ import { criarSeletorDeMes } from './ui/seletorDeMes.js';
 import { criarSeletorDeModo } from './ui/seletorDeModo.js';
 import { criarTelaAssinatura } from './ui/telaAssinatura.js';
 import { criarTelaBoasVindas } from './ui/telaBoasVindas.js';
+import { criarTelaDeBloqueio } from './ui/telaDeBloqueio.js';
 import { VERSAO_DO_APP } from './versao.js';
 
 const elemento = (id) => document.getElementById(id);
@@ -155,7 +158,7 @@ const telaAssinatura = criarTelaAssinatura(elemento('tela-assinatura'), {
 });
 const menuLateral = criarMenuLateral(elemento('menu-lateral'), elemento('botao-menu'), {
   aoEscolherTela: (nome) => navegacao.abrirTela(nome),
-  aoAlterarPreferencia: (nome, valor) => (nome === 'avisos' && valor === AVISOS.LIGADOS ? ligarAvisos() : alterarPreferencia(nome, valor)),
+  aoAlterarPreferencia: escolherNoMenu,
 });
 const seletorDeIdioma = criarSeletorDeIdioma(elemento('seletor-de-idioma'), {
   local, aoEscolherIdioma: (idioma) => alterarPreferencia('idioma', idioma),
@@ -301,6 +304,13 @@ function deslocarMesAberto(deslocamento) {
 }
 
 // ── Preferências ────────────────────────────────────────────────────────────
+/** Avisos e bloqueio precisam de permissão ou da trava do aparelho; o resto muda direto. */
+function escolherNoMenu(nome, valor) {
+  if (nome === 'avisos' && valor === AVISOS.LIGADOS) return ligarAvisos();
+  if (nome === 'bloqueio') return bloqueioDoApp?.mudarOpcao(valor);
+  alterarPreferencia(nome, valor);
+}
+
 function alterarPreferencia(nome, valor) {
   aplicarPreferencias(preferencias.alterar({ [nome]: valor }));
   if (nome === 'modo') estado.periodo = periodoDoDia(valor, relogio.hoje().dia);
@@ -341,11 +351,44 @@ function aplicarPreferencias(atuais) {
   seletorDeModo.renderizar(modoDeControle());
   botaoDeValores.renderizar(atuais.valores);
   renderizarHorariosDosAvisos(atuais.horarioDosAvisos);
+  renderizarPrazosDoBloqueio(atuais.prazoDoBloqueio);
+}
+
+function renderizarPrazosDoBloqueio(prazoEscolhido) {
+  elemento('prazo-do-bloqueio').innerHTML = PRAZOS_DO_BLOQUEIO_EM_MINUTOS.map((prazo) =>
+    `<option value="${prazo}" ${prazo === prazoEscolhido ? 'selected' : ''}>${local.t(`preferencias.bloqueio.prazo.${prazo}`)}</option>`).join('');
 }
 
 function renderizarHorariosDosAvisos(horarioEscolhido) {
   elemento('horario-dos-avisos').innerHTML = HORARIOS_DOS_AVISOS.map((horario) =>
     `<option value="${horario}" ${horario === horarioEscolhido ? 'selected' : ''}>${local.formatarHorario(horario)}</option>`).join('');
+}
+
+/**
+ * No app instalado, com os plugins: a opção de bloqueio aparece no menu e, ligada, o app só
+ * mostra os dados depois da trava do aparelho. Sem os plugins (navegador), o app nunca fica bloqueado.
+ */
+function prepararBloqueio() {
+  const telaDeBloqueio = criarTelaDeBloqueio(elemento('tela-bloqueio'), { aoDesbloquear: () => bloqueioDoApp?.desbloquear() });
+  const plugins = obterPluginsDoBloqueio();
+  if (!plugins) {
+    telaDeBloqueio.esconder();
+    return undefined;
+  }
+  elemento('preferencia-bloqueio').hidden = false;
+  const prazos = elemento('prazo-do-bloqueio');
+  prazos.addEventListener('change', () => alterarPreferencia('prazoDoBloqueio', prazos.value));
+  const bloqueio = criarBloqueioDoApp({
+    plataforma: criarBloqueioNativo(plugins),
+    lerPreferencias: preferencias.obter,
+    salvarOpcao: (valor) => alterarPreferencia('bloqueio', valor),
+    agora: Date.now,
+    tela: telaDeBloqueio,
+    textosDaConfirmacao: () => ({ titulo: 'ContaCerta', motivo: local.t('bloqueio.motivo'), cancelar: local.t('bloqueio.cancelar') }),
+    avisarQueNaoHaTrava: () => aviso.mostrar(local.t('bloqueio.semTrava')),
+  });
+  bloqueio.iniciar().catch((erro) => console.warn('Bloqueio do app não iniciado; o botão Desbloquear tenta de novo.', erro));
+  return bloqueio;
 }
 
 /** No app instalado: baixa pacotes novos sozinho ou avisa quando é preciso instalar um APK novo. */
@@ -389,6 +432,7 @@ async function abrirConformeAssinatura() {
   navegacao.bloquearEm('assinatura');
 }
 
+const bloqueioDoApp = prepararBloqueio();
 mostrarVersaoDoApp();
 preencherLinksDoMenu();
 aplicarPreferencias(preferencias.obter());

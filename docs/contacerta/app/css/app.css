@@ -703,3 +703,19 @@ a.menu-lateral__opcao { text-decoration: none; }
   border: 1.5px solid var(--borda-forte); background: var(--superficie); color: var(--texto); resize: vertical;
 }
 .assinatura__nota { color: var(--texto-suave); font-size: .95rem; text-align: center; }
+
+/* ── Bloqueio do app ─────────────────────────────────────────────────────── */
+/* Bloqueado, só a tela de bloqueio aparece: o resto fica invisível também para leitores de tela. */
+.tela-bloqueio { display: none; }
+html[data-bloqueado] body { overflow: hidden; }
+html[data-bloqueado] body > :not(.tela-bloqueio) { visibility: hidden; }
+html[data-bloqueado] .tela-bloqueio {
+  position: fixed; inset: 0; z-index: 2147483647;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  padding: max(24px, env(safe-area-inset-top)) 24px max(24px, env(safe-area-inset-bottom));
+  background: var(--fundo); color: var(--texto); text-align: center;
+}
+.tela-bloqueio__icone { width: 64px; height: 64px; color: var(--roxo-texto); }
+.tela-bloqueio__titulo { margin: 0; font-size: 1.5rem; }
+.tela-bloqueio__explicacao { margin: 0; max-width: 32ch; color: var(--texto-suave); line-height: 1.45; }
+.tela-bloqueio__botao { min-width: 220px; margin-top: 8px; font-size: 1.1rem; }

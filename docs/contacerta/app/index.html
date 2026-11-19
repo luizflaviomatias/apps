@@ -20,10 +20,18 @@
     try {
       const preferencias = JSON.parse(localStorage.getItem('contacerta:preferencias'));
       if (preferencias?.tema === 'escuro') document.documentElement.dataset.tema = 'escuro';
-    } catch { /* sem preferências salvas: fica o tema claro */ }
+      // Com o bloqueio ligado, o app já nasce coberto: os valores não aparecem antes da trava do aparelho.
+      if (preferencias?.bloqueio === 'ligado' && window.Capacitor?.isNativePlatform?.()) document.documentElement.dataset.bloqueado = '';
+    } catch { /* sem preferências salvas: fica o tema claro e o app desbloqueado */ }
   </script>
 </head>
 <body>
+  <section id="tela-bloqueio" class="tela-bloqueio" aria-labelledby="titulo-bloqueio">
+    <svg class="tela-bloqueio__icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><path d="M12 15v2"/></svg>
+    <h2 id="titulo-bloqueio" class="tela-bloqueio__titulo" data-i18n="bloqueio.titulo">ContaCerta bloqueado</h2>
+    <p class="tela-bloqueio__explicacao" data-i18n="bloqueio.explicacao">Use a digital, o rosto, o padrão ou o PIN do celular para entrar.</p>
+    <button type="button" class="botao-primario tela-bloqueio__botao" data-acao="desbloquear" data-i18n="bloqueio.desbloquear">Desbloquear</button>
+  </section>
   <header class="topo">
     <span class="topo__marca" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><path d="M15 15h2"/></svg>
@@ -162,6 +170,18 @@
           <select id="horario-dos-avisos"></select>
         </label>
         <p class="preferencia__explicacao" data-i18n="preferencias.avisos.explicacao"></p>
+      </div>
+      <div class="preferencia" id="preferencia-bloqueio" role="group" aria-labelledby="rotulo-bloqueio" hidden>
+        <span class="preferencia__rotulo" id="rotulo-bloqueio" data-i18n="preferencias.bloqueio">Bloqueio do app</span>
+        <div class="escolhas">
+          <button type="button" data-preferencia="bloqueio" data-valor="ligado" aria-pressed="false"><span data-i18n="preferencias.bloqueio.ligado">Ligado</span></button>
+          <button type="button" data-preferencia="bloqueio" data-valor="desligado" aria-pressed="false"><span data-i18n="preferencias.bloqueio.desligado">Desligado</span></button>
+        </div>
+        <label class="preferencia__horario">
+          <span data-i18n="preferencias.bloqueio.prazo">Pedir de novo</span>
+          <select id="prazo-do-bloqueio"></select>
+        </label>
+        <p class="preferencia__explicacao" data-i18n="preferencias.bloqueio.explicacao"></p>
       </div>
       <p class="menu-lateral__secao" data-i18n="menu.assinatura">Assinatura</p>
       <ul class="menu-lateral__lista">

@@ -1,4 +1,4 @@
-// Preferências da pessoa (controle, tema, idioma, moeda e valores à vista ou ocultos), guardadas no aparelho.
+// Preferências da pessoa (controle, tema, idioma, moeda, valores à vista ou ocultos, avisos e bloqueio), guardadas no aparelho.
 // O armazenamento é injetado (localStorage no app, memória nos testes).
 import { MODO } from '../dominio/orcamento.js';
 
@@ -11,6 +11,11 @@ export const VALORES = Object.freeze({ VISIVEIS: 'visiveis', OCULTOS: 'ocultos' 
 export const AVISOS = Object.freeze({ LIGADOS: 'ligados', DESLIGADOS: 'desligados' });
 export const HORARIOS_DOS_AVISOS = Object.freeze(['07:00', '08:00', '09:00', '10:00', '12:00', '18:00', '20:00']);
 const HORARIO_PADRAO_DOS_AVISOS = '09:00';
+/** Pedir a trava do aparelho (digital, rosto, padrão, PIN ou senha) para entrar no app. */
+export const BLOQUEIO = Object.freeze({ LIGADO: 'ligado', DESLIGADO: 'desligado' });
+/** Quantos minutos o app pode ficar em segundo plano antes de pedir a trava de novo. */
+export const PRAZOS_DO_BLOQUEIO_EM_MINUTOS = Object.freeze(['0', '1', '5']);
+const PRAZO_PADRAO_DO_BLOQUEIO = '1';
 
 const CHAVE = 'contacerta:preferencias';
 const IDIOMA_PADRAO = IDIOMA.INGLES;
@@ -55,6 +60,8 @@ export function criarPreferencias({ armazenamento, idiomasDoAparelho, jaUsavaOAp
       valores: VALORES.VISIVEIS,
       avisos: undefined,
       horarioDosAvisos: HORARIO_PADRAO_DOS_AVISOS,
+      bloqueio: BLOQUEIO.DESLIGADO,
+      prazoDoBloqueio: PRAZO_PADRAO_DO_BLOQUEIO,
     };
     gravar(iniciais);
     return iniciais;
@@ -80,6 +87,8 @@ export function criarPreferencias({ armazenamento, idiomasDoAparelho, jaUsavaOAp
       valores: valorValido(salvas.valores, VALORES) ?? VALORES.VISIVEIS,
       avisos: valorValido(salvas.avisos, AVISOS),
       horarioDosAvisos: valorValido(salvas.horarioDosAvisos, HORARIOS_DOS_AVISOS) ?? HORARIO_PADRAO_DOS_AVISOS,
+      bloqueio: valorValido(salvas.bloqueio, BLOQUEIO) ?? BLOQUEIO.DESLIGADO,
+      prazoDoBloqueio: valorValido(salvas.prazoDoBloqueio, PRAZOS_DO_BLOQUEIO_EM_MINUTOS) ?? PRAZO_PADRAO_DO_BLOQUEIO,
     };
   }
 
