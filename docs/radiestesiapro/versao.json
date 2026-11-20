@@ -1,20 +1,20 @@
 {
   "formato": 1,
   "app": "radiestesiapro",
-  "versao": "2.1.0",
-  "publicadaEm": "2026-11-19T23:56:26Z",
-  "fonteSha256": "3cda0cc1cd133807b3b6abf28bc2b4ba5ac754a7c2b6f11e07094b33de80b089",
+  "versao": "2.1.1",
+  "publicadaEm": "2026-11-20T00:21:28Z",
+  "fonteSha256": "b3ac81ee38f70724eddf3c8fc4aa407d379e137e6972188b4532008baf7f6fc5",
   "android": {
-    "versao": "2.1.0",
-    "codigo": 20100,
+    "versao": "2.1.1",
+    "codigo": 20101,
     "versaoMinima": "2.1.0",
-    "sha256": "c7282e2a5ffeda396b064ada46c48851136cc6bd46edcc776e20d8285c35d414",
-    "url": "https://github.com/luizflaviomatias/apps/releases/download/radiestesiapro-v2.1.0-apk/RadiestesiaPro-2.1.0.apk",
-    "tamanho": 9316517
+    "sha256": "7e55f0bec24b8d810abf969145f2efd864da7b3c72cde4b5188103ac975547c8",
+    "url": "https://github.com/luizflaviomatias/apps/releases/download/radiestesiapro-v2.1.1-apk/RadiestesiaPro-2.1.1.apk",
+    "tamanho": 9316767
   },
   "web": {
-    "sha256": "4b579ce524eecd45bce4e9218701b0d540e7a34176e9d039ad4cc3499c554124",
-    "url": "https://github.com/luizflaviomatias/apps/releases/download/radiestesiapro-v2.1.0/RadiestesiaPro-web-2.1.0.zip",
-    "tamanho": 888404
+    "sha256": "3793f8cf8b5aaf0b715fde02a5902f8dcb2425f742b5631107d02f3343e356f5",
+    "url": "https://github.com/luizflaviomatias/apps/releases/download/radiestesiapro-v2.1.1/RadiestesiaPro-web-2.1.1.zip",
+    "tamanho": 888431
   }
 }

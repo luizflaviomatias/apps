@@ -15,7 +15,8 @@ const HORARIO_PADRAO_DOS_AVISOS = '09:00';
 export const BLOQUEIO = Object.freeze({ LIGADO: 'ligado', DESLIGADO: 'desligado' });
 /** Quantos minutos o app pode ficar em segundo plano antes de pedir a trava de novo. */
 export const PRAZOS_DO_BLOQUEIO_EM_MINUTOS = Object.freeze(['0', '1', '5']);
-const PRAZO_PADRAO_DO_BLOQUEIO = '1';
+/** Como nos apps de banco: pede a trava toda vez que a pessoa volta ao app. */
+const PRAZO_PADRAO_DO_BLOQUEIO = '0';
 
 const CHAVE = 'contacerta:preferencias';
 const IDIOMA_PADRAO = IDIOMA.INGLES;

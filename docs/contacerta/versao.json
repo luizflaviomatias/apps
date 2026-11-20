@@ -1,21 +1,21 @@
 {
   "formato": 1,
   "app": "contacerta",
-  "versao": "3.10.0",
-  "publicadaEm": "2026-11-19T23:29:56Z",
-  "fonteSha256": "02079ffb2ace36aab6dd43e307365739e9c242c0cf8722eb949978a448165bce",
+  "versao": "3.10.1",
+  "publicadaEm": "2026-11-20T00:19:26Z",
+  "fonteSha256": "8be732fcc98b58373506d8ecebfde1a02a75471221ed387882692ba92b47e7f6",
   "android": {
-    "versao": "3.10.0",
-    "codigo": 31000,
+    "versao": "3.10.1",
+    "codigo": 31001,
     "versaoMinima": "3.10.0",
-    "sha256": "01995441e75f5ad3c0ecf4c36290298b8d5ef383c731d0acf014914c42a8ea66",
-    "url": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.10.0-apk/ContaCerta-3.10.0.apk",
-    "tamanho": 8783927
+    "sha256": "e1b94974cd4b765dbb64b83a61d3a532c5e735b9145f305e571e654ba8d96dd6",
+    "url": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.10.1-apk/ContaCerta-3.10.1.apk",
+    "tamanho": 8735325
   },
   "web": {
-    "sha256": "993b679a11679e39d4f1b8a78996b71f18d714788db5032541bb02f54f97273f",
-    "url": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.10.0/ContaCerta-web-3.10.0.zip",
-    "tamanho": 100175
+    "sha256": "12a3bf715af6c7183e32a5d957dfe377ad41a3726bf86e5e7d3b95638e0e20bb",
+    "url": "https://github.com/luizflaviomatias/apps/releases/download/contacerta-v3.10.1/ContaCerta-web-3.10.1.zip",
+    "tamanho": 100213
   },
   "ios": {
     "tipo": "pwa",
