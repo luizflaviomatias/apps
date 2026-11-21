@@ -220,6 +220,8 @@
     footer { padding: 32px 0 48px; color: var(--texto-suave); font-size: .92rem; border-top: 1px solid var(--borda); }
     footer .conteiner { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; }
   </style>
+  <link rel="stylesheet" href="tutoriais/tutorial.css">
+  <script type="module" src="tutoriais/tutorial.js"></script>
 </head>
 <body>
   <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -254,6 +256,7 @@
       <a class="marca" href="#inicio"><img src="app/icones/icone-192.png" alt="" width="36" height="36">ContaCerta</a>
       <nav aria-label="Seções da página">
         <a class="opcional" href="#como-funciona">Como funciona</a>
+        <a class="opcional" href="#tutorial">Tutorial</a>
         <a class="opcional" href="#recursos">Recursos</a>
         <a class="opcional" href="#duvidas">Dúvidas</a>
         <a href="#baixar">Baixar</a>
@@ -353,6 +356,52 @@
           <li><div><strong>Repita nos próximos meses com um toque</strong><span>O botão de copiar, ao lado do nome do mês, leva todos os lançamentos para os meses seguintes. As cópias chegam como não pagas.</span></div></li>
           <li><div><strong>Acompanhe pelos relatórios</strong><span>No menu (☰), veja o que falta pagar, como este mês ficou comparado ao anterior, o gráfico de gastos, a evolução mês a mês e o resumo do ano.</span></div></li>
         </ol>
+      </div>
+    </section>
+
+    <section id="tutorial" aria-labelledby="titulo-tutorial" style="padding-top:0" data-tutorial>
+      <div class="conteiner">
+        <h2 class="titulo-secao" id="titulo-tutorial">Tutorial em vídeo</h2>
+        <p class="subtitulo-secao">Em um minuto e meio: do primeiro lançamento aos relatórios, no app de verdade.</p>
+        <div class="tutorial">
+          <figure class="tutorial__video">
+            <video controls preload="none" playsinline width="720" height="1558" poster="tutoriais/contacerta-tutorial-poster.jpg"
+              aria-labelledby="titulo-tutorial" aria-describedby="nota-tutorial">
+              <source src="tutoriais/contacerta-tutorial.webm" type='video/webm; codecs="vp9"'>
+              <source src="tutoriais/contacerta-tutorial.mp4" type="video/mp4">
+              <track kind="captions" src="tutoriais/contacerta-tutorial.vtt" srclang="pt-BR" label="Português (Brasil)" default>
+              <track kind="chapters" src="tutoriais/contacerta-tutorial-capitulos.vtt" srclang="pt-BR" label="Capítulos">
+              <a href="tutoriais/contacerta-tutorial.mp4">Baixar o vídeo (MP4)</a>
+            </video>
+          </figure>
+          <div>
+            <h3>Capítulos</h3>
+            <ol class="tutorial__capitulos">
+              <li><button type="button" data-tempo="4.4"><span class="tutorial__tempo">0:04</span> Escolha como controlar</button></li>
+              <li><button type="button" data-tempo="13.4"><span class="tutorial__tempo">0:13</span> Lance recebimentos e gastos</button></li>
+              <li><button type="button" data-tempo="39.1"><span class="tutorial__tempo">0:39</span> Marque o que já foi pago</button></li>
+              <li><button type="button" data-tempo="48.4"><span class="tutorial__tempo">0:48</span> Copie para os próximos meses</button></li>
+              <li><button type="button" data-tempo="56.6"><span class="tutorial__tempo">0:56</span> Veja os relatórios</button></li>
+              <li><button type="button" data-tempo="78.2"><span class="tutorial__tempo">1:18</span> Esconda os valores</button></li>
+            </ol>
+            <details class="tutorial__transcricao">
+              <summary>Ler a transcrição</summary>
+              <h4>Escolha como controlar</h4>
+              <p>Na primeira vez, escolha como você controla o dinheiro: por mês ou por quinzena. O app já vem com os gastos mais comuns. É só preencher os valores.</p>
+              <h4>Lance recebimentos e gastos</h4>
+              <p>Toque no valor e digite. Primeiro, o salário do mês. Depois, os gastos: aluguel, internet, mercado… Para um gasto que não está na lista, toque no + de Gastos. Dê um nome, o valor, o dia e a categoria.</p>
+              <h4>Marque o que já foi pago</h4>
+              <p>Pagou uma conta? Marque a caixinha ao lado dela. No fim da tela, o resumo mostra o que entrou, o que saiu e o saldo do mês.</p>
+              <h4>Copie para os próximos meses</h4>
+              <p>Os gastos se repetem? Copie este mês para os meses seguintes. O mês seguinte já vem marcado. Marque outros, se quiser, e toque em Copiar.</p>
+              <h4>Veja os relatórios</h4>
+              <p>No menu ficam os relatórios. Contas a pagar: o que já foi pago e o que ainda falta. Gráfico de gastos: para onde foi o dinheiro do mês. Resumo do ano: os totais de todos os meses.</p>
+              <h4>Esconda os valores</h4>
+              <p>Em público, toque no olho para esconder os valores. Toque de novo para mostrar.</p>
+            </details>
+            <p class="tutorial__nota" id="nota-tutorial">Vídeo sem som, com legendas. Valores de exemplo.</p>
+          </div>
+        </div>
       </div>
     </section>
 
