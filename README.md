@@ -25,6 +25,9 @@ O código dos apps fica em repositórios próprios. Este repositório só tem as
 
 Um app com problema não impede o outro de ser publicado; o workflow fica vermelho e mostra o motivo.
 
+O resto de `docs/<app>/` é escrito à mão e o motor não mexe: a landing (`index.html`) e, no ContaCerta, o vídeo
+da seção **Tutorial** em `docs/contacerta/tutoriais/` (MP4, WebM, poster, legendas e capítulos em WebVTT).
+
 ## Configuração
 
 - `apps.json`: lista dos apps e do repositório de cada um.
