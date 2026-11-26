@@ -29,13 +29,15 @@ export class ErroCotacaoIndisponivel extends Error {
 /**
  * @typedef {{ venda: number, variacaoPercentual: number, cotadoEm: Date, fonte: string }} Cotacao
  * @param {Array<() => Promise<Cotacao>>} fontes em ordem de preferência
+ * @param {{ aoFalhar?: (erro: Error) => void }} [opcoes] avisada a cada fonte que falha, mesmo quando outra responde
  */
-export async function buscarCotacaoDoDolar(fontes) {
+export async function buscarCotacaoDoDolar(fontes, { aoFalhar = () => {} } = {}) {
   const falhas = [];
   for (const buscar of fontes) {
     try {
       return validarCotacao(await buscar());
     } catch (erro) {
+      aoFalhar(erro);
       falhas.push(erro);
     }
   }
