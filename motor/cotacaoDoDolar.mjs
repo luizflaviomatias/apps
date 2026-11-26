@@ -11,6 +11,11 @@ const FUSO_DO_MERCADO = 'America/Sao_Paulo';
 const TEMPO_MAXIMO_DE_ESPERA_MS = 15_000;
 const DIAS_PROCURADOS_NA_PTAX = 10;
 const CABECALHOS = { 'User-Agent': 'apps-landing-cotacao', Accept: 'application/json' };
+const MUITAS_CONSULTAS = 429;
+/** Os IPs do GitHub Actions são compartilhados: a AwesomeAPI às vezes responde 429 e libera pouco depois. */
+const TENTATIVAS_QUANDO_LIMITADA = 4;
+const ESPERA_ENTRE_TENTATIVAS_MS = 20_000;
+const esperarDeVerdade = (ms) => new Promise((resolver) => { setTimeout(resolver, ms); });
 
 export class ErroCotacaoInvalida extends Error {
   constructor(fonte, detalhe) {
@@ -62,10 +67,12 @@ export function momentoDaCotacao(cotadoEm) {
   return hora < HORA_QUE_SEPARA_ABERTURA_DO_FECHAMENTO ? MOMENTO_DA_COTACAO.ABERTURA : MOMENTO_DA_COTACAO.FECHAMENTO;
 }
 
-/** Dólar comercial em tempo real (AwesomeAPI, gratuita e sem chave). */
-export function criarFonteAwesomeApi({ fetch = globalThis.fetch } = {}) {
+/** Dólar comercial em tempo real (AwesomeAPI, gratuita e sem chave). Limitada (HTTP 429), espera e tenta de novo. */
+export function criarFonteAwesomeApi({ fetch = globalThis.fetch, esperar = esperarDeVerdade } = {}) {
   return async () => {
-    const { USDBRL: cotacao } = await pedirJson(fetch, 'https://economia.awesomeapi.com.br/json/last/USD-BRL', 'AwesomeAPI');
+    const { USDBRL: cotacao } = await pedirJson(fetch, 'https://economia.awesomeapi.com.br/json/last/USD-BRL', 'AwesomeAPI', {
+      tentativas: TENTATIVAS_QUANDO_LIMITADA, esperar,
+    });
     if (!cotacao) throw new ErroCotacaoInvalida('AwesomeAPI', 'resposta sem USDBRL');
     return {
       venda: Number(cotacao.ask),
@@ -96,10 +103,15 @@ export function criarFontePtax({ fetch = globalThis.fetch, agora = () => new Dat
   };
 }
 
-async function pedirJson(fetch, endereco, fonte) {
-  const resposta = await fetch(endereco, { headers: CABECALHOS, signal: AbortSignal.timeout(TEMPO_MAXIMO_DE_ESPERA_MS) });
-  if (!resposta.ok) throw new ErroCotacaoInvalida(fonte, `HTTP ${resposta.status}`);
-  return resposta.json();
+async function pedirJson(fetch, endereco, fonte, { tentativas = 1, esperar = esperarDeVerdade } = {}) {
+  for (let tentativa = 1; ; tentativa += 1) {
+    const resposta = await fetch(endereco, { headers: CABECALHOS, signal: AbortSignal.timeout(TEMPO_MAXIMO_DE_ESPERA_MS) });
+    if (resposta.ok) return resposta.json();
+    if (resposta.status !== MUITAS_CONSULTAS || tentativa >= tentativas) {
+      throw new ErroCotacaoInvalida(fonte, `HTTP ${resposta.status}${tentativa > 1 ? ` depois de ${tentativa} tentativas` : ''}`);
+    }
+    await esperar(ESPERA_ENTRE_TENTATIVAS_MS);
+  }
 }
 
 function validarCotacao(cotacao) {
