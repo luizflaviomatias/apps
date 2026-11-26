@@ -53,8 +53,13 @@ test('PTAX: última cotação do período e variação contra a anterior, no hor
 
 test('primeira fonte fora do ar: usa a reserva', async () => {
   const reserva = async () => ({ venda: 5.1, variacaoPercentual: 0.5, cotadoEm: FECHAMENTO_26_11, fonte: 'Reserva' });
-  const cotacao = await buscarCotacaoDoDolar([criarFonteAwesomeApi({ fetch: fetchQueFalha }), reserva]);
+  const falhas = [];
+  const cotacao = await buscarCotacaoDoDolar(
+    [criarFonteAwesomeApi({ fetch: fetchQueFalha }), reserva],
+    { aoFalhar: (erro) => falhas.push(erro.message) },
+  );
   assert.equal(cotacao.fonte, 'Reserva');
+  assert.deepEqual(falhas, ['sem rede']);
 });
 
 test('resposta com erro HTTP ou valor estranho não vale como cotação', async () => {

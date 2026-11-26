@@ -11,7 +11,10 @@ const RAIZ = resolve(fileURLToPath(new URL('..', import.meta.url)));
 const site = criarSite(resolve(RAIZ, 'docs'));
 
 try {
-  const cotacao = montarCotacaoPublica(await buscarCotacaoDoDolar([criarFonteAwesomeApi(), criarFontePtax()]));
+  const cotacao = montarCotacaoPublica(await buscarCotacaoDoDolar(
+    [criarFonteAwesomeApi(), criarFontePtax()],
+    { aoFalhar: (erro) => console.warn(`Fonte de cotação falhou: ${erro.message}`) },
+  ));
   await site.escreverJson('cotacoes', 'dolar.json', cotacao);
   console.log(`Dólar ${cotacao.valor} (${cotacao.variacaoPercentual}%, ${cotacao.momento}, ${cotacao.cotadoEm}, ${cotacao.fonte})`);
 } catch (erro) {
