@@ -28,6 +28,13 @@ Um app com problema não impede o outro de ser publicado; o workflow fica vermel
 O resto de `docs/<app>/` é escrito à mão e o motor não mexe: a landing (`index.html`) e, no ContaCerta, o vídeo
 da seção **Tutorial** em `docs/contacerta/tutoriais/` (MP4, WebM, poster, legendas e capítulos em WebVTT).
 
+## Cotação do dólar
+
+O workflow *Cotação do dólar* roda em dias úteis às 9:30 (abertura do mercado de câmbio) e às 17:30 (fechamento),
+no horário de Brasília, e grava `docs/cotacoes/dolar.json`, que o ContaCerta mostra no topo da tela do mês.
+A fonte é o dólar comercial (venda) da AwesomeAPI; se ela falhar, a PTAX do Banco Central. Se nenhuma responder,
+o arquivo anterior fica e o workflow fica vermelho. `npm run cotacao` faz o mesmo no computador.
+
 ## Configuração
 
 - `apps.json`: lista dos apps e do repositório de cada um.

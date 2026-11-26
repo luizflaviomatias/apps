@@ -1,0 +1,9 @@
+{
+  "formato": 1,
+  "moeda": "USD",
+  "valor": 5.6445,
+  "variacaoPercentual": -3.04,
+  "momento": "fechamento",
+  "cotadoEm": "2026-11-26T21:00:22.000Z",
+  "fonte": "AwesomeAPI"
+}
