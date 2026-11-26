@@ -67,6 +67,10 @@
       <div id="grade-do-mes"></div>
       <p class="rodape-versao" data-versao-do-app></p>
     </section>
+    <section id="tela-tarefas" data-tela-conteudo="tarefas" aria-label="TO DO" data-i18n-aria="menu.tarefas" hidden>
+      <button class="botao-voltar" type="button" data-tela="mes"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="voltar.mes">Voltar para o mês</span></button>
+      <div id="painel-tarefas"></div>
+    </section>
     <section id="tela-contas" data-tela-conteudo="contas" aria-label="Contas a pagar" data-i18n-aria="menu.contas" hidden>
       <button class="botao-voltar" type="button" data-tela="mes"><svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"/></svg><span data-i18n="voltar.mes">Voltar para o mês</span></button>
       <div id="painel-contas"></div>
@@ -100,6 +104,12 @@
           <button type="button" class="menu-lateral__opcao" data-tela="mes">
             <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
             <span><strong data-i18n="menu.lancamentos">Lançamentos do mês</strong><small id="descricao-lancamentos" data-i18n="menu.lancamentos.quinzenal">Recebimentos e gastos de cada quinzena</small></span>
+          </button>
+        </li>
+        <li>
+          <button type="button" class="menu-lateral__opcao" data-tela="tarefas">
+            <svg class="icone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="m7 10 2 2 3-3"/><path d="M14 11h4M8 16h10"/></svg>
+            <span><strong data-i18n="menu.tarefas">TO DO</strong><small id="descricao-tarefas"></small></span>
           </button>
         </li>
       </ul>
@@ -158,6 +168,14 @@
           <button type="button" data-preferencia="moeda" data-valor="EUR" aria-pressed="false"><strong>€</strong><small data-i18n="moeda.EUR">Euro</small></button>
           <button type="button" data-preferencia="moeda" data-valor="USD" aria-pressed="false"><strong>US$</strong><small data-i18n="moeda.USD">Dólar</small></button>
         </div>
+      </div>
+      <div class="preferencia" role="group" aria-labelledby="rotulo-aba-tarefas">
+        <span class="preferencia__rotulo" id="rotulo-aba-tarefas" data-i18n="preferencias.abaDeTarefas">Aba TO DO na tela principal</span>
+        <div class="escolhas">
+          <button type="button" data-preferencia="abaDeTarefas" data-valor="exibida" aria-pressed="false"><span data-i18n="preferencias.abaDeTarefas.exibida">Exibir</span></button>
+          <button type="button" data-preferencia="abaDeTarefas" data-valor="oculta" aria-pressed="false"><span data-i18n="preferencias.abaDeTarefas.oculta">Ocultar</span></button>
+        </div>
+        <p class="preferencia__explicacao" data-i18n="preferencias.abaDeTarefas.explicacao"></p>
       </div>
       <div class="preferencia" id="preferencia-avisos" role="group" aria-labelledby="rotulo-avisos" hidden>
         <span class="preferencia__rotulo" id="rotulo-avisos" data-i18n="preferencias.avisos">Avisos no celular</span>

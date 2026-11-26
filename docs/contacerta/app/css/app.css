@@ -273,20 +273,20 @@ button:disabled { cursor: default; }
 
 /* Caixa "pago" */
 :root { --largura-do-marcador: 24px; }
-.campo-pago {
+.campo-pago, .campo-feita {
   appearance: none; -webkit-appearance: none; margin: 0;
   width: 22px; height: 22px; border-radius: 7px;
   border: 2px solid var(--borda-forte); background: var(--superficie);
   display: grid; place-items: center; cursor: pointer;
   transition: background-color .15s, border-color .15s;
 }
-.campo-pago::after {
+.campo-pago::after, .campo-feita::after {
   content: ""; width: 6px; height: 11px; margin-top: -2px;
   border: solid var(--superficie); border-width: 0 2.5px 2.5px 0; transform: rotate(45deg) scale(0);
   transition: transform .15s;
 }
-.campo-pago:checked { background: var(--pago); border-color: var(--pago); }
-.campo-pago:checked::after { transform: rotate(45deg) scale(1); }
+.campo-pago:checked, .campo-feita:checked { background: var(--pago); border-color: var(--pago); }
+.campo-pago:checked::after, .campo-feita:checked::after { transform: rotate(45deg) scale(1); }
 
 .lancamento--pago .campo-descricao,
 .lancamento--pago .lancamento__dia,
@@ -302,6 +302,45 @@ button:disabled { cursor: default; }
 .quinzena__rodape {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
   margin-top: 16px; padding-top: 14px; border-top: 2px solid var(--borda);
+}
+
+/* Lista de tarefas (TO DO): mesma caixa, risco e cores dos gastos pagos */
+.abas-quinzena--com-tarefas { grid-template-columns: minmax(78px, auto); grid-auto-flow: column; grid-auto-columns: 1fr; }
+.abas-quinzena--com-tarefas .aba-quinzena__saldo { font-size: .78rem; white-space: nowrap; }
+.aba-quinzena--tarefas { padding-inline: 10px; }
+.grupo--tarefa h4 { color: var(--roxo-texto); }
+.filtro-tarefas { margin-top: 12px; }
+.filtro-tarefas button { min-height: 40px; }
+.nova-tarefa { display: grid; grid-template-columns: 1fr 40px; gap: 8px; align-items: center; margin: 8px 0 4px; }
+.nova-tarefa input {
+  width: 100%; min-width: 0; min-height: 44px; padding: 8px 12px; border: 1.5px solid var(--borda); border-radius: 10px;
+  background: var(--campo); font-size: var(--texto-de-campo);
+}
+.nova-tarefa input:focus { outline: none; border-color: var(--roxo-texto); background: var(--superficie); }
+.tarefa {
+  display: grid; gap: 0 8px; align-items: center;
+  grid-template-columns: var(--largura-do-marcador) 1fr 44px;
+  grid-template-areas: "marca descricao excluir" "marca data excluir";
+  padding: 8px 0; border-top: 1px solid var(--borda);
+}
+.tarefa:first-child { border-top: 0; }
+.tarefa .campo-feita { grid-area: marca; }
+.tarefa .botao-excluir { grid-area: excluir; }
+.campo-tarefa {
+  grid-area: descricao; width: 100%; min-width: 0; min-height: 36px; padding: 4px 8px;
+  border: 1.5px solid transparent; border-radius: 10px; background: transparent;
+  font: inherit; font-size: var(--texto-de-campo); font-weight: 500; line-height: 1.35; color: inherit;
+  resize: none; overflow: hidden; field-sizing: content;
+}
+.campo-tarefa:focus { outline: none; border-color: var(--roxo-texto); background: var(--superficie); }
+.tarefa__data { grid-area: data; padding-left: 8px; font-size: .78rem; color: var(--pago); }
+.tarefa--feita .campo-tarefa {
+  opacity: .6; text-decoration: line-through; text-decoration-thickness: 2px;
+  color: var(--texto-suave); -webkit-text-fill-color: var(--texto-suave);
+}
+.tarefas__separador {
+  margin: 12px 0 0; padding-top: 12px; border-top: 2px solid var(--borda);
+  font-size: .82rem; font-weight: 700; color: var(--texto-suave);
 }
 
 /* Totais */

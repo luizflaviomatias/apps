@@ -12,6 +12,9 @@ const CHAVE_DO_TITULO = {
   [PERIODO.MES_INTEIRO]: 'mes.mesInteiro',
 };
 
+/** Identifica a aba TO DO entre as abas dos períodos (1ª e 2ª quinzena, mês inteiro). */
+export const ABA_TAREFAS = 'tarefas';
+
 const TEXTOS_DO_GRUPO = {
   [TIPO.RECEITA]: { titulo: 'mes.recebimentos', botao: 'mes.adicionarRecebimento' },
   [TIPO.DESPESA]: { titulo: 'mes.gastos', botao: 'mes.adicionarGasto' },
@@ -23,8 +26,10 @@ const TEXTOS_DO_GRUPO = {
  * Gasto marcado como pago fica riscado e travado até ser desmarcado.
  * Cada gasto tem a etiqueta da categoria; ao tocar nela, `aoCategorizar` abre a troca.
  * Com os valores ocultos, o campo de valor mostra a máscara e não aceita digitação.
+ * Com `abaDeTarefas`, a aba TO DO fica sempre à esquerda das outras; aberta, mostra `conteudoDasTarefas`
+ * (elemento mantido por quem chama, com a lista de tarefas e seus próprios eventos) no lugar do cartão do período.
  */
-export function criarGradeDoMes(container, { local, ...acoes }) {
+export function criarGradeDoMes(container, { local, conteudoDasTarefas, ...acoes }) {
   let periodosExibidos = [];
 
   container.addEventListener('input', (evento) => {
@@ -48,20 +53,29 @@ export function criarGradeDoMes(container, { local, ...acoes }) {
     acoesDosBotoes[botao.dataset.acao]?.();
   });
 
-  /** @param {{ modo: string, ano: number, mes: number, lancamentos: object[], periodoAtivo: string }} dados */
-  function renderizar({ modo, ano, mes, lancamentos, periodoAtivo }) {
+  /**
+   * @param {{ modo: string, ano: number, mes: number, lancamentos: object[], periodoAtivo: string,
+   *           abaDeTarefas?: { pendentes: number } }} dados  sem `abaDeTarefas`, a aba TO DO não aparece.
+   */
+  function renderizar({ modo, ano, mes, lancamentos, periodoAtivo, abaDeTarefas }) {
     const { t } = local;
     periodosExibidos = periodosDoMes(modo, ano, mes);
-    const ativo = periodosExibidos.find(({ periodo }) => periodo === periodoAtivo) ?? periodosExibidos[0];
-    const temAbas = periodosExibidos.length > 1;
+    const tarefasAbertas = abaDeTarefas !== undefined && periodoAtivo === ABA_TAREFAS;
+    const periodoAberto = periodosExibidos.find(({ periodo }) => periodo === periodoAtivo) ?? periodosExibidos[0];
+    const temVariosPeriodos = periodosExibidos.length > 1;
+    const temAbas = temVariosPeriodos || abaDeTarefas !== undefined;
+    const conteudoDaAba = tarefasAbertas
+      ? '<div data-lugar="tarefas"></div>'
+      : cartaoDoPeriodo(periodoAberto, lancamentos, { comRodape: temVariosPeriodos }, local);
     container.innerHTML = `
-      ${temAbas ? abasDosPeriodos(periodosExibidos, ativo.periodo, t) : ''}
-      ${cartaoDoPeriodo(ativo, lancamentos, { comRodape: temAbas }, local)}
+      ${temAbas ? abasDoMes(periodosExibidos, abaDeTarefas, tarefasAbertas ? ABA_TAREFAS : periodoAberto.periodo, t) : ''}
+      ${conteudoDaAba}
       <section class="resumo-mes" aria-label="${t('mes.resumo')}">
         ${blocoDeTotal(t('mes.recebidoNoMes'), 'mes-recebido')}
         ${blocoDeTotal(t('mes.gastoNoMes'), 'mes-gasto')}
         ${blocoDeTotal(t('mes.saldoDoMes'), 'mes-saldo')}
       </section>`;
+    if (tarefasAbertas) container.querySelector('[data-lugar="tarefas"]').replaceWith(conteudoDasTarefas);
     atualizarTotais(lancamentos);
   }
 
@@ -119,16 +133,33 @@ function blocoDeTotal(rotulo, chave) {
           <strong class="total__valor" data-total="${chave}"></strong></div>`;
 }
 
-function abasDosPeriodos(periodos, periodoAtivo, t) {
+function abasDoMes(periodos, abaDeTarefas, abaAtiva, t) {
+  const abaDosPeriodos = periodos.map(({ periodo }) => aba(periodo, abaAtiva, {
+    titulo: t(CHAVE_DO_TITULO[periodo]),
+    detalhe: `${t('mes.saldo')} <strong data-total="${periodo}-saldo"></strong>`,
+  }));
+  const abas = abaDeTarefas === undefined ? abaDosPeriodos : [abaDasTarefas(abaDeTarefas, abaAtiva, t), ...abaDosPeriodos];
   return `
-    <div class="abas-quinzena" role="tablist" aria-label="${t('mes.quinzenas')}">
-      ${periodos.map(({ periodo }) => `
-        <button class="aba-quinzena" role="tab" aria-selected="${periodo === periodoAtivo}"
-                data-acao="trocar-periodo" data-periodo="${periodo}">
-          <span class="aba-quinzena__titulo">${t(CHAVE_DO_TITULO[periodo])}</span>
-          <span class="aba-quinzena__saldo">${t('mes.saldo')} <strong data-total="${periodo}-saldo"></strong></span>
-        </button>`).join('')}
+    <div class="abas-quinzena ${abaDeTarefas === undefined ? '' : 'abas-quinzena--com-tarefas'}" role="tablist" aria-label="${t('mes.quinzenas')}">
+      ${abas.join('')}
     </div>`;
+}
+
+function abaDasTarefas({ pendentes }, abaAtiva, t) {
+  return aba(ABA_TAREFAS, abaAtiva, {
+    titulo: t('tarefas.titulo'),
+    detalhe: pendentes === 0 ? t('tarefas.tudoFeito') : t('tarefas.pendentes', { n: pendentes }),
+    classe: 'aba-quinzena--tarefas',
+  });
+}
+
+function aba(identificador, abaAtiva, { titulo, detalhe, classe = '' }) {
+  return `
+        <button class="aba-quinzena ${classe}" role="tab" aria-selected="${identificador === abaAtiva}"
+                data-acao="trocar-periodo" data-periodo="${identificador}">
+          <span class="aba-quinzena__titulo">${titulo}</span>
+          <span class="aba-quinzena__saldo">${detalhe}</span>
+        </button>`;
 }
 
 function cartaoDoPeriodo(intervalo, lancamentos, { comRodape }, local) {

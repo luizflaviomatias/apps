@@ -32,6 +32,8 @@ export function criarLocalizacao(configuracaoInicial) {
   let formatoDoMes;
   let formatoDeLista;
   let formatoDoHorario;
+  let formatoDoDiaCurto;
+  let formatoDoDiaCurtoComAno;
   let dinheiro;
   let valoresOcultos;
 
@@ -43,6 +45,8 @@ export function criarLocalizacao(configuracaoInicial) {
     formatoDoMes = new Intl.DateTimeFormat(idioma, { month: 'long' });
     formatoDeLista = new Intl.ListFormat(idioma, { style: 'long', type: 'conjunction' });
     formatoDoHorario = new Intl.DateTimeFormat(idioma, { hour: 'numeric', minute: '2-digit' });
+    formatoDoDiaCurto = new Intl.DateTimeFormat(idioma, { day: '2-digit', month: '2-digit' });
+    formatoDoDiaCurtoComAno = new Intl.DateTimeFormat(idioma, { day: '2-digit', month: '2-digit', year: '2-digit' });
     dinheiro = criarFormatoDeDinheiro(configuracao);
   }
 
@@ -73,6 +77,11 @@ export function criarLocalizacao(configuracaoInicial) {
     formatarHorario: (horario) => {
       const [hora, minuto] = horario.split(':').map(Number);
       return formatoDoHorario.format(new Date(2000, 0, 1, hora, minuto));
+    },
+    /** Dia curto, com o ano só quando não é o ano atual: "26/11" ou "26/11/25" em português, "11/26" em inglês. */
+    formatarDiaCurto: ({ ano, mes, dia }, anoAtual) => {
+      const formato = ano === anoAtual ? formatoDoDiaCurto : formatoDoDiaCurtoComAno;
+      return formato.format(new Date(ano, mes, dia));
     },
     formatarMoeda: (centavos) => (valoresOcultos ? `${dinheiro.simboloDaMoeda} ${VALOR_OCULTO}` : dinheiro.formatarMoeda(centavos)),
     formatarMoedaResumida: (centavos) => (valoresOcultos ? VALOR_OCULTO : dinheiro.formatarMoedaResumida(centavos)),

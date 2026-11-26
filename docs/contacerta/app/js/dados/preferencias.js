@@ -1,4 +1,4 @@
-// Preferências da pessoa (controle, tema, idioma, moeda, valores à vista ou ocultos, avisos e bloqueio), guardadas no aparelho.
+// Preferências da pessoa (controle, tema, idioma, moeda, valores à vista ou ocultos, avisos, bloqueio e aba TO DO), guardadas no aparelho.
 // O armazenamento é injetado (localStorage no app, memória nos testes).
 import { MODO } from '../dominio/orcamento.js';
 
@@ -17,6 +17,8 @@ export const BLOQUEIO = Object.freeze({ LIGADO: 'ligado', DESLIGADO: 'desligado'
 export const PRAZOS_DO_BLOQUEIO_EM_MINUTOS = Object.freeze(['0', '1', '5']);
 /** Como nos apps de banco: pede a trava toda vez que a pessoa volta ao app. */
 const PRAZO_PADRAO_DO_BLOQUEIO = '0';
+/** Aba TO DO (lista de tarefas) na tela principal; oculta, a lista continua acessível pelo menu. */
+export const ABA_DE_TAREFAS = Object.freeze({ EXIBIDA: 'exibida', OCULTA: 'oculta' });
 
 const CHAVE = 'contacerta:preferencias';
 const IDIOMA_PADRAO = IDIOMA.INGLES;
@@ -63,6 +65,7 @@ export function criarPreferencias({ armazenamento, idiomasDoAparelho, jaUsavaOAp
       horarioDosAvisos: HORARIO_PADRAO_DOS_AVISOS,
       bloqueio: BLOQUEIO.DESLIGADO,
       prazoDoBloqueio: PRAZO_PADRAO_DO_BLOQUEIO,
+      abaDeTarefas: ABA_DE_TAREFAS.EXIBIDA,
     };
     gravar(iniciais);
     return iniciais;
@@ -90,6 +93,7 @@ export function criarPreferencias({ armazenamento, idiomasDoAparelho, jaUsavaOAp
       horarioDosAvisos: valorValido(salvas.horarioDosAvisos, HORARIOS_DOS_AVISOS) ?? HORARIO_PADRAO_DOS_AVISOS,
       bloqueio: valorValido(salvas.bloqueio, BLOQUEIO) ?? BLOQUEIO.DESLIGADO,
       prazoDoBloqueio: valorValido(salvas.prazoDoBloqueio, PRAZOS_DO_BLOQUEIO_EM_MINUTOS) ?? PRAZO_PADRAO_DO_BLOQUEIO,
+      abaDeTarefas: valorValido(salvas.abaDeTarefas, ABA_DE_TAREFAS) ?? ABA_DE_TAREFAS.EXIBIDA,
     };
   }
 

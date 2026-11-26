@@ -1,4 +1,5 @@
 // Ponto de composição: cria as dependências, liga telas, ações e preferências, e guarda o estado da tela.
+import { criarAcoesDasTarefas } from './acoesDasTarefas.js';
 import { criarAcoesDoMes } from './acoesDoMes.js';
 import { criarAgendadorDeAvisos, criarAgendadorSemNotificacoes } from './agendadorDeAvisos.js';
 import {
@@ -9,13 +10,17 @@ import { criarAtualizador, criarBuscaDeAnuncio } from './atualizador.js';
 import { criarBloqueioDoApp } from './bloqueioDoApp.js';
 import { criarAvisoDispensado } from './dados/avisoDispensado.js';
 import { criarAnoConformePlanilha } from './dados/modeloPlanilha.js';
-import { AVISOS, HORARIOS_DOS_AVISOS, PRAZOS_DO_BLOQUEIO_EM_MINUTOS, criarPreferencias } from './dados/preferencias.js';
+import {
+  ABA_DE_TAREFAS, AVISOS, HORARIOS_DOS_AVISOS, PRAZOS_DO_BLOQUEIO_EM_MINUTOS, criarPreferencias,
+} from './dados/preferencias.js';
 import { criarRepositorioOrcamento } from './dados/repositorioOrcamento.js';
+import { criarRepositorioTarefas } from './dados/repositorioTarefas.js';
 import { compararMeses } from './dominio/comparacaoDeMeses.js';
 import { resumirContasAPagar, vencimentosDoDia } from './dominio/contasAPagar.js';
 import { resumirEvolucaoDosGastos } from './dominio/evolucaoDeGastos.js';
 import { resumirGastosPorCategoria } from './dominio/gastosPorCategoria.js';
 import { MODO, deslocarMes, periodoDoDia, resumirAno, totalizar } from './dominio/orcamento.js';
+import { SITUACAO_DA_TAREFA, organizarTarefas, tarefasDoMes } from './dominio/tarefas.js';
 import { aplicarTextosNaPagina, criarLocalizacao } from './i18n/localizacao.js';
 import { criarBuscaDeLicenca, criarLicenciamento } from './licenciamento.js';
 import { criarNavegacao } from './navegacao.js';
@@ -32,13 +37,14 @@ import { criarDialogoCopia } from './ui/dialogoCopia.js';
 import { criarDialogoLancamento } from './ui/dialogoLancamento.js';
 import { criarFaixaDeAtualizacao } from './ui/faixaDeAtualizacao.js';
 import { criarFaixaDeVencimentos } from './ui/faixaDeVencimentos.js';
-import { criarGradeDoMes } from './ui/gradeDoMes.js';
+import { ABA_TAREFAS, criarGradeDoMes } from './ui/gradeDoMes.js';
 import { criarMenuLateral } from './ui/menuLateral.js';
 import { criarPainelAnual } from './ui/painelAnual.js';
 import { criarPainelComparacao } from './ui/painelComparacao.js';
 import { criarPainelContasAPagar } from './ui/painelContasAPagar.js';
 import { criarPainelEvolucao } from './ui/painelEvolucao.js';
 import { criarPainelGraficoDeGastos } from './ui/painelGraficoDeGastos.js';
+import { criarPainelTarefas } from './ui/painelTarefas.js';
 import { criarSeletorDeIdioma } from './ui/seletorDeIdioma.js';
 import { criarSeletorDeMes } from './ui/seletorDeMes.js';
 import { criarSeletorDeModo } from './ui/seletorDeModo.js';
@@ -57,6 +63,7 @@ const repositorio = criarRepositorioOrcamento({
   armazenamento,
   criarAnoInicial: (ano) => criarAnoConformePlanilha(ano, gerarId, modeloDoAnoNovo()),
 });
+const repositorioDeTarefas = criarRepositorioTarefas({ armazenamento });
 const preferencias = criarPreferencias({
   armazenamento,
   idiomasDoAparelho: navigator.languages ?? [navigator.language],
@@ -85,9 +92,11 @@ const DEZEMBRO = 11;
 const estado = {
   ano: hojeNaAbertura.ano,
   mes: hojeNaAbertura.mes,
-  periodo: periodoDoDia(modoDeControle(), hojeNaAbertura.dia),
+  periodo: abaInicialDoMes(),
   anoDoPainel: hojeNaAbertura.ano,
   anoComparado: ANO_ANTERIOR,
+  /** Filtro da tela TO DO; volta a "Todas" a cada abertura do app. */
+  situacaoDasTarefas: SITUACAO_DA_TAREFA.TODAS,
 };
 
 // ── Componentes de interface ────────────────────────────────────────────────
@@ -110,6 +119,29 @@ const acoes = criarAcoesDoMes({
   aoDigitarValor: (lancamentos) => { grade.atualizarTotais(lancamentos); reagendarAvisos(); },
 });
 
+const acoesDasTarefas = criarAcoesDasTarefas({
+  repositorio: repositorioDeTarefas,
+  hoje: relogio.hoje,
+  gerarId,
+  local,
+  confirmacao,
+  aoSalvar: () => navegacao.renderizarTelaAtual(),
+});
+const acoesNaTelaDasTarefas = {
+  local,
+  aoIncluir: proteger(acoesDasTarefas.incluir),
+  aoRenomear: proteger(acoesDasTarefas.renomear),
+  aoMarcarComoFeita: proteger(acoesDasTarefas.marcarComoFeita),
+  aoExcluir: proteger(acoesDasTarefas.excluir),
+};
+/** A aba TO DO da tela do mês e a tela TO DO do menu mostram a mesma lista, cada uma no seu lugar. */
+const conteudoDaAbaDeTarefas = document.createElement('div');
+const tarefasNaAba = criarPainelTarefas(conteudoDaAbaDeTarefas, acoesNaTelaDasTarefas);
+const tarefasNaTelaPropria = criarPainelTarefas(elemento('painel-tarefas'), {
+  ...acoesNaTelaDasTarefas,
+  aoFiltrar: (situacao) => { estado.situacaoDasTarefas = situacao; navegacao.renderizarTelaAtual(); },
+});
+
 const faixaDeVencimentos = criarFaixaDeVencimentos(elemento('faixa-vencimentos'), {
   local,
   aoVerContas: () => { mudarMesSemRedesenhar(relogio.hoje()); navegacao.abrirTela('contas'); },
@@ -127,6 +159,7 @@ const seletorDeMes = criarSeletorDeMes(elemento('seletor-mes'), {
 });
 const grade = criarGradeDoMes(elemento('grade-do-mes'), {
   local,
+  conteudoDasTarefas: conteudoDaAbaDeTarefas,
   aoAlterarValor: proteger(acoes.alterarValor),
   aoAlterarDescricao: proteger(acoes.alterarDescricao),
   aoMarcarPagamento: proteger(acoes.marcarPagamento),
@@ -176,6 +209,7 @@ const navegacao = criarNavegacao({
     assinatura: { renderizar: () => telaAssinatura.renderizar() },
     'boas-vindas': { renderizar: () => telaBoasVindas.renderizar() },
     mes: { renderizar: proteger(renderizarMes) },
+    tarefas: { renderizar: proteger(renderizarTelaDasTarefas) },
     contas: { renderizar: proteger(renderizarContas) },
     comparacao: { renderizar: proteger(renderizarComparacao) },
     grafico: { renderizar: proteger(renderizarGrafico) },
@@ -198,6 +232,15 @@ document.querySelector('.conteudo').addEventListener('click', (evento) => {
 /** Enquanto a pessoa não escolheu, o app mostra o modo quinzenal (o de quem já usava). */
 function modoDeControle() {
   return preferencias.obter().modo ?? MODO.QUINZENAL;
+}
+
+function abaDeTarefasEstaExibida() {
+  return preferencias.obter().abaDeTarefas === ABA_DE_TAREFAS.EXIBIDA;
+}
+
+/** Com a aba TO DO exibida, a tela do mês abre nela (a primeira à esquerda); sem ela, no período de hoje. */
+function abaInicialDoMes() {
+  return abaDeTarefasEstaExibida() ? ABA_TAREFAS : periodoDoDia(modoDeControle(), relogio.hoje().dia);
 }
 
 /** Anos ainda não abertos nascem no idioma e no modo atuais. */
@@ -234,7 +277,29 @@ function renderizarMes() {
     mes: estado.mes,
     lancamentos: acoes.lancamentosDoMes(),
     periodoAtivo: estado.periodo,
+    abaDeTarefas: abaDeTarefasEstaExibida() ? { pendentes: tarefasPendentes().length } : undefined,
   });
+  if (estado.periodo === ABA_TAREFAS) {
+    tarefasNaAba.renderizar({ tarefas: tarefasDoMes(acoesDasTarefas.tarefas(), estado), hoje });
+  }
+  renderizarResumoDasTarefasNoMenu();
+}
+
+function renderizarTelaDasTarefas() {
+  tarefasNaTelaPropria.renderizar({
+    tarefas: acoesDasTarefas.tarefas(), hoje: relogio.hoje(), situacao: estado.situacaoDasTarefas,
+  });
+  renderizarResumoDasTarefasNoMenu();
+}
+
+function tarefasPendentes() {
+  return organizarTarefas(acoesDasTarefas.tarefas()).pendentes;
+}
+
+/** No menu, abaixo de "TO DO": quantas tarefas faltam. */
+function renderizarResumoDasTarefasNoMenu() {
+  const pendentes = tarefasPendentes().length;
+  elemento('descricao-tarefas').textContent = pendentes === 0 ? local.t('tarefas.tudoFeito') : local.t('tarefas.pendentes', { n: pendentes });
 }
 
 function renderizarContas() {
@@ -314,6 +379,7 @@ function escolherNoMenu(nome, valor) {
 function alterarPreferencia(nome, valor) {
   aplicarPreferencias(preferencias.alterar({ [nome]: valor }));
   if (nome === 'modo') estado.periodo = periodoDoDia(valor, relogio.hoje().dia);
+  if (nome === 'abaDeTarefas') estado.periodo = abaInicialDoMes();
   navegacao.renderizarTelaAtual();
   reagendarAvisos();
 }
@@ -352,6 +418,7 @@ function aplicarPreferencias(atuais) {
   botaoDeValores.renderizar(atuais.valores);
   renderizarHorariosDosAvisos(atuais.horarioDosAvisos);
   renderizarPrazosDoBloqueio(atuais.prazoDoBloqueio);
+  renderizarResumoDasTarefasNoMenu();
 }
 
 function renderizarPrazosDoBloqueio(prazoEscolhido) {
