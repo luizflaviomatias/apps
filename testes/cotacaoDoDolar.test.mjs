@@ -51,6 +51,26 @@ test('PTAX: última cotação do período e variação contra a anterior, no hor
   assert.match(enderecoPedido, /dataFinalCotacao='11-26-2026'/);
 });
 
+test('AwesomeAPI limitada (429): espera e tenta de novo até responder', async () => {
+  const respostas = [{ ok: false, status: 429 }, { ok: false, status: 429 }, {
+    ok: true, status: 200,
+    json: async () => ({ USDBRL: { ask: '5.6', pctChange: '0.1', timestamp: String(FECHAMENTO_26_11.getTime() / 1000) } }),
+  }];
+  const esperas = [];
+  const buscar = criarFonteAwesomeApi({ fetch: async () => respostas.shift(), esperar: async (ms) => { esperas.push(ms); } });
+  assert.equal((await buscar()).venda, 5.6);
+  assert.equal(esperas.length, 2);
+});
+
+test('AwesomeAPI sempre limitada: desiste depois de 4 tentativas', async () => {
+  let pedidos = 0;
+  const buscar = criarFonteAwesomeApi({
+    fetch: async () => { pedidos += 1; return { ok: false, status: 429 }; }, esperar: async () => {},
+  });
+  await assert.rejects(buscar(), /HTTP 429 depois de 4 tentativas/);
+  assert.equal(pedidos, 4);
+});
+
 test('primeira fonte fora do ar: usa a reserva', async () => {
   const reserva = async () => ({ venda: 5.1, variacaoPercentual: 0.5, cotadoEm: FECHAMENTO_26_11, fonte: 'Reserva' });
   const falhas = [];
