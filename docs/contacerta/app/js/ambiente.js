@@ -4,6 +4,9 @@ const CHAVE_DE_TESTE_DO_ARMAZENAMENTO = 'contacerta:teste';
 /** Anúncio da versão mais nova, publicado pela landing page (repositório apps) a partir do versao.json. */
 export const ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO = 'https://luizflaviomatias.github.io/apps/contacerta/atualizacao.json';
 
+/** Cotação do dólar publicada pela landing page (repositório apps) na abertura e no fechamento do mercado. */
+export const ENDERECO_DA_COTACAO_DO_DOLAR = 'https://luizflaviomatias.github.io/apps/cotacoes/dolar.json';
+
 /** Serviço que entrega a licença de quem assinou (repositório licencas, no Cloudflare Workers). */
 export const ENDERECO_DO_EMISSOR_DE_LICENCAS = 'https://licencas.luizflaviomatias.workers.dev';
 /** Payment Link do Stripe da assinatura mensal do ContaCerta. */

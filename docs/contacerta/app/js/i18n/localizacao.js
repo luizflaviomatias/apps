@@ -10,6 +10,8 @@ export const TEXTOS_POR_IDIOMA = Object.freeze({ 'pt-BR': ptBR, 'es-ES': esES, '
 const ANO_DE_REFERENCIA = 2000;
 const TAMANHO_DO_NOME_ABREVIADO = 3;
 const VALOR_DE_EXEMPLO_CENTAVOS = 15000;
+const MOEDA_DA_COTACAO = 'BRL';
+const CASAS_DA_COTACAO = 4;
 /** O que aparece no lugar de um valor em dinheiro quando a pessoa escolheu ocultar os valores. */
 export const VALOR_OCULTO = '••••';
 
@@ -34,6 +36,8 @@ export function criarLocalizacao(configuracaoInicial) {
   let formatoDoHorario;
   let formatoDoDiaCurto;
   let formatoDoDiaCurtoComAno;
+  let formatoDaCotacao;
+  let formatoDoPercentual;
   let dinheiro;
   let valoresOcultos;
 
@@ -47,6 +51,10 @@ export function criarLocalizacao(configuracaoInicial) {
     formatoDoHorario = new Intl.DateTimeFormat(idioma, { hour: 'numeric', minute: '2-digit' });
     formatoDoDiaCurto = new Intl.DateTimeFormat(idioma, { day: '2-digit', month: '2-digit' });
     formatoDoDiaCurtoComAno = new Intl.DateTimeFormat(idioma, { day: '2-digit', month: '2-digit', year: '2-digit' });
+    formatoDaCotacao = new Intl.NumberFormat(idioma, {
+      style: 'currency', currency: MOEDA_DA_COTACAO, minimumFractionDigits: CASAS_DA_COTACAO, maximumFractionDigits: CASAS_DA_COTACAO,
+    });
+    formatoDoPercentual = new Intl.NumberFormat(idioma, { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 });
     dinheiro = criarFormatoDeDinheiro(configuracao);
   }
 
@@ -83,6 +91,10 @@ export function criarLocalizacao(configuracaoInicial) {
       const formato = ano === anoAtual ? formatoDoDiaCurto : formatoDoDiaCurtoComAno;
       return formato.format(new Date(ano, mes, dia));
     },
+    /** Cotação do dólar em reais, com 4 casas: "R$ 5,6445". Não segue a moeda escolhida: a cotação é sempre em real. */
+    formatarCotacao: (valor) => formatoDaCotacao.format(valor),
+    /** 0.48 → "0,48%" em português, "0.48%" em inglês. */
+    formatarPercentual: (percentual) => formatoDoPercentual.format(percentual / 100),
     formatarMoeda: (centavos) => (valoresOcultos ? `${dinheiro.simboloDaMoeda} ${VALOR_OCULTO}` : dinheiro.formatarMoeda(centavos)),
     formatarMoedaResumida: (centavos) => (valoresOcultos ? VALOR_OCULTO : dinheiro.formatarMoedaResumida(centavos)),
     valoresEstaoOcultos: () => valoresOcultos,

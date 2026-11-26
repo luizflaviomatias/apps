@@ -343,6 +343,24 @@ button:disabled { cursor: default; }
   font-size: .82rem; font-weight: 700; color: var(--texto-suave);
 }
 
+/* Cotação do dólar no topo da tela do mês */
+.cotacao-dolar {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 4px 12px;
+  margin-bottom: 16px; padding: 12px 16px; border-radius: var(--raio);
+  background: var(--superficie); border: 1px solid var(--borda); box-shadow: var(--sombra);
+}
+.cotacao-dolar__icone {
+  display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px;
+  background: var(--roxo-suave); color: var(--roxo-texto); font-weight: 800; font-size: .95rem;
+}
+.cotacao-dolar__texto { display: flex; flex-direction: column; min-width: 0; }
+.cotacao-dolar__rotulo { font-size: .82rem; color: var(--texto-suave); white-space: nowrap; }
+.cotacao-dolar__valor { font-size: 1.25rem; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cotacao-dolar__lado { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
+.cotacao-dolar__variacao { font-weight: 700; font-size: .9rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.cotacao-dolar__momento { font-size: .78rem; color: var(--texto-suave); white-space: nowrap; }
+.cotacao-dolar--antiga .cotacao-dolar__momento { color: var(--negativo); font-weight: 600; }
+
 /* Totais */
 .resumo-mes {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 16px;

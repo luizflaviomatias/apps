@@ -3,12 +3,13 @@ import { criarAcoesDasTarefas } from './acoesDasTarefas.js';
 import { criarAcoesDoMes } from './acoesDoMes.js';
 import { criarAgendadorDeAvisos, criarAgendadorSemNotificacoes } from './agendadorDeAvisos.js';
 import {
-  CHAVE_PUBLICA_DA_LICENCA, DOCUMENTOS_LEGAIS, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA, LINK_DO_PORTAL_DO_CLIENTE,
+  CHAVE_PUBLICA_DA_LICENCA, DOCUMENTOS_LEGAIS, ENDERECO_DA_COTACAO_DO_DOLAR, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA, LINK_DO_PORTAL_DO_CLIENTE,
   criarRelogio, gerarId, obterArmazenamentoDoAparelho, registrarFuncionamentoOffline,
 } from './ambiente.js';
 import { criarAtualizador, criarBuscaDeAnuncio } from './atualizador.js';
 import { criarBloqueioDoApp } from './bloqueioDoApp.js';
 import { criarAvisoDispensado } from './dados/avisoDispensado.js';
+import { criarBuscaDaCotacao, criarCotacaoDoDolar } from './dados/cotacaoDoDolar.js';
 import { criarAnoConformePlanilha } from './dados/modeloPlanilha.js';
 import {
   ABA_DE_TAREFAS, AVISOS, HORARIOS_DOS_AVISOS, PRAZOS_DO_BLOQUEIO_EM_MINUTOS, criarPreferencias,
@@ -37,6 +38,7 @@ import { criarDialogoCopia } from './ui/dialogoCopia.js';
 import { criarDialogoLancamento } from './ui/dialogoLancamento.js';
 import { criarFaixaDeAtualizacao } from './ui/faixaDeAtualizacao.js';
 import { criarFaixaDeVencimentos } from './ui/faixaDeVencimentos.js';
+import { criarFaixaDoDolar } from './ui/faixaDoDolar.js';
 import { ABA_TAREFAS, criarGradeDoMes } from './ui/gradeDoMes.js';
 import { criarMenuLateral } from './ui/menuLateral.js';
 import { criarPainelAnual } from './ui/painelAnual.js';
@@ -64,6 +66,7 @@ const repositorio = criarRepositorioOrcamento({
   criarAnoInicial: (ano) => criarAnoConformePlanilha(ano, gerarId, modeloDoAnoNovo()),
 });
 const repositorioDeTarefas = criarRepositorioTarefas({ armazenamento });
+const cotacaoDoDolar = criarCotacaoDoDolar({ armazenamento, buscar: criarBuscaDaCotacao(ENDERECO_DA_COTACAO_DO_DOLAR) });
 const preferencias = criarPreferencias({
   armazenamento,
   idiomasDoAparelho: navigator.languages ?? [navigator.language],
@@ -142,6 +145,7 @@ const tarefasNaTelaPropria = criarPainelTarefas(elemento('painel-tarefas'), {
   aoFiltrar: (situacao) => { estado.situacaoDasTarefas = situacao; navegacao.renderizarTelaAtual(); },
 });
 
+const faixaDoDolar = criarFaixaDoDolar(elemento('faixa-dolar'), { local });
 const faixaDeVencimentos = criarFaixaDeVencimentos(elemento('faixa-vencimentos'), {
   local,
   aoVerContas: () => { mudarMesSemRedesenhar(relogio.hoje()); navegacao.abrirTela('contas'); },
@@ -255,6 +259,20 @@ function renderizarAvisoDeHoje() {
   faixaDeVencimentos.renderizar(vencimentosDoDia(repositorio.obterMes(hoje.ano, hoje.mes), hoje.dia));
 }
 
+function renderizarCotacaoDoDolar() {
+  faixaDoDolar.renderizar({ cotacao: cotacaoDoDolar.ultima(), hoje: relogio.hoje() });
+}
+
+/**
+ * Busca a cotação ao abrir o app e ao voltar para ele; só a faixa é redesenhada, para não tirar o foco
+ * de um campo em edição. Sem internet, continua a última cotação guardada.
+ */
+function atualizarCotacaoDoDolar() {
+  cotacaoDoDolar.atualizar()
+    .then(renderizarCotacaoDoDolar)
+    .catch((erro) => console.warn('Cotação do dólar não atualizada; fica a última guardada.', erro));
+}
+
 /** Só no app instalado, uma vez: convida a ligar os avisos no celular. */
 function renderizarConviteDeAvisos() {
   if (!notificacoes || !preferencias.aindaNaoRespondeuSobreAvisos()) return conviteDeAvisos.esconder();
@@ -262,6 +280,7 @@ function renderizarConviteDeAvisos() {
 }
 
 function renderizarMes() {
+  renderizarCotacaoDoDolar();
   renderizarAvisoDeHoje();
   renderizarConviteDeAvisos();
   const hoje = relogio.hoje();
@@ -507,3 +526,7 @@ abrirConformeAssinatura();
 registrarFuncionamentoOffline();
 prepararAvisosNoCelular();
 verificarAtualizacao();
+atualizarCotacaoDoDolar();
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') atualizarCotacaoDoDolar();
+});
