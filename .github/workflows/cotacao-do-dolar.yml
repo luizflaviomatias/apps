@@ -1,0 +1,40 @@
+name: Cotação do dólar
+
+on:
+  # Dias úteis, no horário de Brasília (UTC-3, sem horário de verão): 9:30, logo depois da abertura
+  # do mercado de câmbio, e 17:30, no fechamento. O GitHub pode atrasar alguns minutos.
+  schedule:
+    - cron: "30 12 * * 1-5"
+    - cron: "30 20 * * 1-5"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# Mesmo grupo da busca de atualizações: as duas publicam em docs/ e não podem dar push ao mesmo tempo.
+concurrency:
+  group: buscar-atualizacoes
+  cancel-in-progress: false
+
+jobs:
+  cotacao:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: Buscar a cotação do dólar
+        run: npm run cotacao
+      - name: Publicar no site
+        run: |
+          git add docs/cotacoes
+          if git diff --cached --quiet; then
+            echo "Cotação igual à publicada."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Atualiza a cotação do dólar"
+          git push

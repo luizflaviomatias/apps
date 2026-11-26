@@ -5,7 +5,8 @@
   "description": "Landing page dos apps e o motor que publica as versões novas",
   "scripts": {
     "test": "node --test \"testes/*.test.mjs\"",
-    "motor": "node motor/principal.mjs"
+    "motor": "node motor/principal.mjs",
+    "cotacao": "node motor/cotacao.mjs"
   },
   "engines": { "node": ">=22" }
 }
