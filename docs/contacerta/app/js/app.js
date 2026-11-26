@@ -3,13 +3,13 @@ import { criarAcoesDasTarefas } from './acoesDasTarefas.js';
 import { criarAcoesDoMes } from './acoesDoMes.js';
 import { criarAgendadorDeAvisos, criarAgendadorSemNotificacoes } from './agendadorDeAvisos.js';
 import {
-  CHAVE_PUBLICA_DA_LICENCA, DOCUMENTOS_LEGAIS, ENDERECO_DA_COTACAO_DO_DOLAR, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA, LINK_DO_PORTAL_DO_CLIENTE,
+  CHAVE_PUBLICA_DA_LICENCA, DOCUMENTOS_LEGAIS, ENDERECO_DA_COTACAO_AO_VIVO, ENDERECO_DA_COTACAO_DO_DOLAR, ENDERECO_DO_ANUNCIO_DE_ATUALIZACAO, ENDERECO_DO_EMISSOR_DE_LICENCAS, LINK_DE_ASSINATURA, LINK_DO_PORTAL_DO_CLIENTE,
   criarRelogio, gerarId, obterArmazenamentoDoAparelho, registrarFuncionamentoOffline,
 } from './ambiente.js';
 import { criarAtualizador, criarBuscaDeAnuncio } from './atualizador.js';
 import { criarBloqueioDoApp } from './bloqueioDoApp.js';
 import { criarAvisoDispensado } from './dados/avisoDispensado.js';
-import { criarBuscaDaCotacao, criarCotacaoDoDolar } from './dados/cotacaoDoDolar.js';
+import { criarBuscaDaCotacao, criarBuscaNaAwesomeApi, criarCotacaoDoDolar } from './dados/cotacaoDoDolar.js';
 import { criarAnoConformePlanilha } from './dados/modeloPlanilha.js';
 import {
   ABA_DE_TAREFAS, AVISOS, HORARIOS_DOS_AVISOS, PRAZOS_DO_BLOQUEIO_EM_MINUTOS, criarPreferencias,
@@ -66,7 +66,10 @@ const repositorio = criarRepositorioOrcamento({
   criarAnoInicial: (ano) => criarAnoConformePlanilha(ano, gerarId, modeloDoAnoNovo()),
 });
 const repositorioDeTarefas = criarRepositorioTarefas({ armazenamento });
-const cotacaoDoDolar = criarCotacaoDoDolar({ armazenamento, buscar: criarBuscaDaCotacao(ENDERECO_DA_COTACAO_DO_DOLAR) });
+const cotacaoDoDolar = criarCotacaoDoDolar({
+  armazenamento,
+  fontes: [criarBuscaNaAwesomeApi(ENDERECO_DA_COTACAO_AO_VIVO), criarBuscaDaCotacao(ENDERECO_DA_COTACAO_DO_DOLAR)],
+});
 const preferencias = criarPreferencias({
   armazenamento,
   idiomasDoAparelho: navigator.languages ?? [navigator.language],
