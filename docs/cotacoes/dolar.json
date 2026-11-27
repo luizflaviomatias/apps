@@ -1,9 +1,9 @@
 {
   "formato": 1,
   "moeda": "USD",
-  "valor": 5.7446,
-  "variacaoPercentual": -2.34,
+  "valor": 5.543,
+  "variacaoPercentual": -3.51,
   "momento": "fechamento",
-  "cotadoEm": "2026-11-26T16:11:27.937Z",
+  "cotadoEm": "2026-11-27T16:21:50.538Z",
   "fonte": "Banco Central (PTAX)"
 }
