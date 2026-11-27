@@ -21,7 +21,7 @@ import { resumirContasAPagar, vencimentosDoDia } from './dominio/contasAPagar.js
 import { resumirEvolucaoDosGastos } from './dominio/evolucaoDeGastos.js';
 import { resumirGastosPorCategoria } from './dominio/gastosPorCategoria.js';
 import { MODO, deslocarMes, periodoDoDia, resumirAno, totalizar } from './dominio/orcamento.js';
-import { SITUACAO_DA_TAREFA, organizarTarefas, tarefasDoMes } from './dominio/tarefas.js';
+import { SITUACAO_DA_TAREFA, TODAS_AS_CATEGORIAS, organizarTarefas, tarefasDoMes } from './dominio/tarefas.js';
 import { aplicarTextosNaPagina, criarLocalizacao } from './i18n/localizacao.js';
 import { criarBuscaDeLicenca, criarLicenciamento } from './licenciamento.js';
 import { criarNavegacao } from './navegacao.js';
@@ -103,6 +103,8 @@ const estado = {
   anoComparado: ANO_ANTERIOR,
   /** Filtro da tela TO DO; volta a "Todas" a cada abertura do app. */
   situacaoDasTarefas: SITUACAO_DA_TAREFA.TODAS,
+  /** Filtro Pessoal / Profissional, o mesmo na aba e na tela TO DO; também volta a "Todas" a cada abertura. */
+  categoriaDasTarefas: TODAS_AS_CATEGORIAS,
 };
 
 // ── Componentes de interface ────────────────────────────────────────────────
@@ -137,6 +139,8 @@ const acoesNaTelaDasTarefas = {
   local,
   aoIncluir: proteger(acoesDasTarefas.incluir),
   aoRenomear: proteger(acoesDasTarefas.renomear),
+  aoTrocarCategoria: proteger(acoesDasTarefas.trocarCategoria),
+  aoFiltrarCategoria: (categoria) => { estado.categoriaDasTarefas = categoria; navegacao.renderizarTelaAtual(); },
   aoMarcarComoFeita: proteger(acoesDasTarefas.marcarComoFeita),
   aoExcluir: proteger(acoesDasTarefas.excluir),
 };
@@ -302,14 +306,19 @@ function renderizarMes() {
     abaDeTarefas: abaDeTarefasEstaExibida() ? { pendentes: tarefasPendentes().length } : undefined,
   });
   if (estado.periodo === ABA_TAREFAS) {
-    tarefasNaAba.renderizar({ tarefas: tarefasDoMes(acoesDasTarefas.tarefas(), estado), hoje });
+    tarefasNaAba.renderizar({
+      tarefas: tarefasDoMes(acoesDasTarefas.tarefas(), estado), hoje, categoria: estado.categoriaDasTarefas,
+    });
   }
   renderizarResumoDasTarefasNoMenu();
 }
 
 function renderizarTelaDasTarefas() {
   tarefasNaTelaPropria.renderizar({
-    tarefas: acoesDasTarefas.tarefas(), hoje: relogio.hoje(), situacao: estado.situacaoDasTarefas,
+    tarefas: acoesDasTarefas.tarefas(),
+    hoje: relogio.hoje(),
+    situacao: estado.situacaoDasTarefas,
+    categoria: estado.categoriaDasTarefas,
   });
   renderizarResumoDasTarefasNoMenu();
 }

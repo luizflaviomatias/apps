@@ -8,16 +8,24 @@ export class ErroTarefaInvalida extends Error {
   }
 }
 
+/** Toda tarefa é pessoal ou profissional. */
+export const CATEGORIA_DA_TAREFA = Object.freeze({ PESSOAL: 'pessoal', PROFISSIONAL: 'profissional' });
+
+/** Tarefas salvas antes de existir a categoria contam como pessoais. */
+const CATEGORIA_PADRAO = CATEGORIA_DA_TAREFA.PESSOAL;
+const CATEGORIAS = Object.values(CATEGORIA_DA_TAREFA);
+
 /**
- * @param {{ id: string, descricao: string, feitaEm?: { ano: number, mes: number, dia: number } }} dados
+ * @param {{ id: string, descricao: string, categoria?: string, feitaEm?: { ano: number, mes: number, dia: number } }} dados
  * `feitaEm` existe só nas tarefas feitas: o dia em que a pessoa marcou a caixa (mês de 0 a 11).
  */
-export function criarTarefa({ id, descricao, feitaEm }) {
+export function criarTarefa({ id, descricao, categoria = CATEGORIA_PADRAO, feitaEm }) {
   const descricaoLimpa = String(descricao ?? '').trim();
   if (!id) throw new ErroTarefaInvalida('id ausente');
   if (descricaoLimpa === '') throw new ErroTarefaInvalida('descrição vazia');
+  if (!CATEGORIAS.includes(categoria)) throw new ErroTarefaInvalida(`categoria "${categoria}"`);
   if (feitaEm !== undefined && !ehDiaValido(feitaEm)) throw new ErroTarefaInvalida(`dia de conclusão ${JSON.stringify(feitaEm)}`);
-  const tarefa = { id, descricao: descricaoLimpa };
+  const tarefa = { id, descricao: descricaoLimpa, categoria };
   if (feitaEm) tarefa.feitaEm = { ano: feitaEm.ano, mes: feitaEm.mes, dia: feitaEm.dia };
   return tarefa;
 }
@@ -33,6 +41,10 @@ export function incluirTarefa(tarefas, tarefa) {
 
 export function renomearTarefa(tarefas, id, descricao) {
   return alterarTarefa(tarefas, id, (tarefa) => ({ ...tarefa, descricao }));
+}
+
+export function trocarCategoriaDaTarefa(tarefas, id, categoria) {
+  return alterarTarefa(tarefas, id, (tarefa) => ({ ...tarefa, categoria }));
 }
 
 export function concluirTarefa(tarefas, id, dia) {
@@ -71,6 +83,15 @@ export function filtrarPorSituacao(tarefas, situacao) {
   const filtro = FILTRO_POR_SITUACAO[situacao];
   if (!filtro) throw new ErroTarefaInvalida(`situação "${situacao}"`);
   return tarefas.filter(filtro);
+}
+
+/** Filtro por categoria, na aba e na tela TO DO: todas ou só as de uma categoria. */
+export const TODAS_AS_CATEGORIAS = 'todas';
+
+export function filtrarPorCategoria(tarefas, categoria) {
+  if (categoria === TODAS_AS_CATEGORIAS) return tarefas;
+  if (!CATEGORIAS.includes(categoria)) throw new ErroTarefaInvalida(`categoria "${categoria}"`);
+  return tarefas.filter((tarefa) => tarefa.categoria === categoria);
 }
 
 /**
